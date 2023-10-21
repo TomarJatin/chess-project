@@ -1,5 +1,6 @@
 {
-  "name": "Chess App",
+  "expo": {
+    "name": "Chess App",
   "slug": "chess-app",
   "version": "1.0.0",
   "orientation": "portrait",
@@ -10,18 +11,15 @@
     "resizeMode": "contain",
     "backgroundColor": "#ffffff"
   },
-  "updates": {
-    "fallbackToCacheTimeout": 0
-  },
   "assetBundlePatterns": [
     "**/*"
   ],
   "ios": {
-    "bundleIdentifier": "com.tomarJatin.chess-app",
+    "bundleIdentifier": "com.tomarJatin.chessapp",
     "supportsTablet": true
   },
   "android": {
-    "package": "com.tomarJatin.chess-app",
+    "package": "com.tomarjatin.chessapp",
     "adaptiveIcon": {
       "foregroundImage": "./assets/icon.png",
       "backgroundColor": "#FFFFFF"
@@ -30,14 +28,10 @@
   "web": {
     "favicon": "./assets/icon.png"
   },
-  "expo": {
     "extra": {
       "eas": {
         "projectId": "7581b767-802f-4392-9a23-c0f3f3f00c7a"
       }
-    },
-    "android": {
-      "package": "com.tomarjatin.chessapp"
     }
   }
 }
