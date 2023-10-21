@@ -10,7 +10,7 @@ const Moves = ({ visibleMoves, size, onSelectMove }) => {
         const left = (file.charCodeAt(0) - 'a'.charCodeAt(0)) * cellSize;
         const bottom = (rank - 1) * cellSize;
         return (
-            <TouchableWithoutFeedback onPressOut={() => onSelectMove(move)} key={`move-${to}`}>
+            <TouchableWithoutFeedback onPressOut={() => onSelectMove(move)} key={`move-${to}-${Math.random()*1000}`}>
                 <View
                     sx={{ position: 'absolute', width: size / 8, height: size / 8, left, bottom }}
                 >

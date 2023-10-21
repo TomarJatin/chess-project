@@ -7,10 +7,9 @@ const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
     const boardSize = Math.min(width, 400);
     return (
-        <SafeAreaView sx={{ display: 'flex', flex: 1, alignItems: 'center' }}>
-            <EmptyBoard size={boardSize} />
+        <SafeAreaView sx={{ display: 'flex', flex: 1, alignItems: 'center',flexDirection: 'column', justifyContent: 'center' }}>
             <Pressable
-                sx={{ padding: 2, backgroundColor: 'black', borderRadius: 4 }}
+                sx={{ padding: 2, borderRadius: 4 }}
                 onPress={() => navigation.navigate('Game')}
             >
                 <Text

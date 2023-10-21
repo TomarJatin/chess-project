@@ -6,7 +6,7 @@ import Chess from '../components/ChessBoard';
 const Game = () => {
     return (
         <SafeAreaView sx={{ display: 'flex', flex: 1, alignItems: 'center' }}>
-            <View>
+            <View sx={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Chess />
             </View>
         </SafeAreaView>

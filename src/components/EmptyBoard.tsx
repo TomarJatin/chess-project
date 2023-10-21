@@ -10,7 +10,7 @@ const EmptyBoard = ({ size }) => {
                 width: size,
                 height: size,
                 backgroundColor: '#ccc',
-                borderRadius: '1%',
+                // borderRadius: '1%',
                 overflow: 'hidden',
             }}
         >

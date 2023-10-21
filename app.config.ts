@@ -17,11 +17,11 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
-        bundleIdentifier: 'com.akshitkrnagpal.chess',
+        bundleIdentifier: 'com.tomarJatin.chess',
         supportsTablet: true,
     },
     android: {
-        package: 'com.akshitkrnagpal.chess',
+        package: 'com.tomarJatin.chess',
         adaptiveIcon: {
             foregroundImage: './assets/icon.png',
             backgroundColor: '#FFFFFF',
@@ -29,20 +29,5 @@ export default {
     },
     web: {
         favicon: './assets/icon.png',
-    },
-    hooks: {
-        postPublish: [
-            {
-                file: 'sentry-expo/upload-sourcemaps',
-                config: {
-                    organization: "your sentry organization's short name here",
-                    project: "your sentry project's name here",
-                },
-            },
-        ],
-    },
-    plugins: ['sentry-expo'],
-    extra: {
-        SENTRY_DSN: process.env.SENTRY_DSN,
     },
 };

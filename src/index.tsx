@@ -20,7 +20,7 @@ const appTheme: Theme = {
 
 const screenOptions: NativeStackNavigationOptions = {
     headerTitleStyle: {
-        fontFamily: 'Verdana',
+        // fontFamily: 'Verdana',
         fontWeight: '600',
     },
     headerStyle: {

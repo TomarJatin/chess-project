@@ -1,9 +1,10 @@
 import { View } from 'dripsy';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import useChess from '../hooks/useChess';
 import EmptyBoard from './EmptyBoard';
 import Moves from './Moves';
+import Toast from "react-native-simple-toast";
 import Pieces from './Pieces';
 
 const useRandomMove = (chess) => {
@@ -24,6 +25,9 @@ const Chess = () => {
 
     const handleSelectPiece = (square) => {
         const moves = chess.moves({ square: square, verbose: true });
+        if(moves.length === 0){
+            Toast.show("Your King is in the danger", Toast.SHORT);
+        }
         setVisibleMoves(moves);
     };
 
@@ -32,6 +36,27 @@ const Chess = () => {
         chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
         setVisibleMoves([]);
     };
+
+    useEffect(() => {
+        if(chess.isGameOver()){
+            if(chess.turn() === 'b' && chess.isCheckmate() ){
+                Toast.show("You won", Toast.LONG);
+            }
+            else if(chess.isCheckmate()) {
+                Toast.show("You lose", Toast.LONG);
+            }
+            else if(chess.isStalemate()){
+                Toast.show("It's a stalemate", Toast.LONG);
+            }
+            else if(chess.isThreefoldRepetition()){
+                Toast.show("It's a three fold repetition", Toast.LONG);
+            }
+            else if(chess.isDraw()){
+                Toast.show("It's a Draw", Toast.LONG);
+            }
+        }
+        // console.log("chess state", chess.isStalemate())
+    }, [chess])
 
     return (
         <View sx={{ position: 'relative' }}>
