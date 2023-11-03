@@ -6,11 +6,13 @@ import EmptyBoard from './EmptyBoard';
 import Moves from './Moves';
 import Toast from 'react-native-simple-toast';
 import Pieces from './Pieces';
+import { Worklets } from 'react-native-worklets-core';
 
 // ["_board", "_turn", "_header", "_kings", "_epSquare", "_halfMoves", "_moveNumber", "_history", "_comments", "_castling"]
 
 
 const checkGameOver = (chess) => {
+    
     if (chess.isGameOver()) {
         if (chess.turn() === 'b' && chess.isCheckmate()) {
             Toast.show('You won', Toast.LONG);
@@ -115,6 +117,7 @@ let pstOpponent = { w: pst_b, b: pst_w };
 let pstSelf = { w: pst_w, b: pst_b };
 
 function evaluateMyBoard(game, move, prevSum, color) {
+    'worklet'
     if (game.isCheckmate()) {
         // Opponent is in checkmate (good for us)
         if (move.color === color) {
@@ -210,6 +213,7 @@ const Chess = () => {
     checkGameOver(chess);
 
     function minMax(game, depth, alpha, beta, isMaximizingPlayer, sum, color) {
+        'worklet'
         setPositionCount((count) => count + 1);
         let children = game.moves({ verbose: true });
 
@@ -275,8 +279,9 @@ const Chess = () => {
     }
 
     function getBestMove(game, color, currSum) {
+        'worklet'
         setPositionCount(0);
-        let depth = 2;
+        let depth = 1;
 
         // if (color === 'b') {
         //   var depth = parseInt($('#search-depth').find(':selected').text());
@@ -305,18 +310,19 @@ const Chess = () => {
         return [bestMove, bestMoveValue];
     }
 
-    function makeBestMove(color, game) {
-        let move;
-        if (color === 'b') {
-            move = getBestMove(game, color, globalSum)[0];
-        } else {
-            move = getBestMove(game, color, -globalSum)[0];
-        }
-        const _globalSum = evaluateMyBoard(game, move, globalSum, 'b');
-        setGlobalSum(_globalSum);
-    }
+    // function makeBestMove(color, game) {
+    //     let move;
+    //     if (color === 'b') {
+    //         move = getBestMove(game, color, globalSum)[0];
+    //     } else {
+    //         move = getBestMove(game, color, -globalSum)[0];
+    //     }
+    //     const _globalSum = evaluateMyBoard(game, move, globalSum, 'b');
+    //     setGlobalSum(_globalSum);
+    // }
 
     const AiTurn = () => {
+        'worklet'
         if (!chess.isGameOver() && chess.turn() === 'b') {
            
             // console.log("move.....", getBestMove(chess, 'b', globalSum));
@@ -352,7 +358,7 @@ const Chess = () => {
         setGlobalSum(_globalSum);
         chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
         setVisibleMoves([]);
-        setTimeout(AiTurn, 2000);
+        setTimeout(AiTurn, 200);
         setAiRunning(true);
     };
 

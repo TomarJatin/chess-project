@@ -9,6 +9,7 @@ import Game from './screens/Game';
 import Home from './screens/Home';
 import PvP from './screens/PvP';
 import PvAi from './screens/PvAi';
+import "expo-dev-client";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,8 +40,8 @@ const App = () => {
                 <Stack.Navigator screenOptions={screenOptions}>
                     <Stack.Screen name='Home' component={Home} options={{ title: 'Chess' }} />
                     <Stack.Screen name='Game' component={Game} />
-                    <Stack.Screen name='Game' component={PvP} />
-                    <Stack.Screen name='Game' component={PvAi} />
+                    <Stack.Screen name='PvP' component={PvP} />
+                    <Stack.Screen name='PvAi' component={PvAi} />
                 </Stack.Navigator>
             </NavigationContainer>
         </DripsyProvider>
