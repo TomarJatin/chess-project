@@ -13,13 +13,6 @@ import "expo-dev-client";
 
 const Stack = createNativeStackNavigator();
 
-const appTheme: Theme = {
-    ...DarkTheme,
-    colors: {
-        ...DarkTheme.colors,
-        background: '#302e2b',
-    },
-};
 
 const screenOptions: NativeStackNavigationOptions = {
     headerTitleStyle: {
@@ -36,12 +29,12 @@ const theme = makeTheme({});
 const App = () => {
     return (
         <DripsyProvider theme={theme}>
-            <NavigationContainer theme={appTheme}>
+            <NavigationContainer>
                 <Stack.Navigator screenOptions={screenOptions}>
-                    <Stack.Screen name='Home' component={Home} options={{ title: 'Chess' }} />
-                    <Stack.Screen name='Game' component={Game} />
-                    <Stack.Screen name='PvP' component={PvP} />
-                    <Stack.Screen name='PvAi' component={PvAi} />
+                    <Stack.Screen name='Home' component={Home} options={{ headerShown: false }} />
+                    <Stack.Screen name='Game' component={Game} options={{ headerShown: false }}/>
+                    <Stack.Screen name='PvP' component={PvP} options={{ headerShown: false }}/>
+                    <Stack.Screen name='PvAi' component={PvAi} options={{ headerShown: false }}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </DripsyProvider>

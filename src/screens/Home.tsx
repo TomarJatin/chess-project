@@ -1,28 +1,41 @@
-import { Pressable, SafeAreaView, Text } from 'dripsy';
-import { useWindowDimensions } from 'react-native';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Dimensions, Pressable, Text, View, useWindowDimensions, StatusBar } from 'react-native';
+import { Image } from 'expo-image';
 import EmptyBoard from '../components/EmptyBoard';
+import { Color } from '../../GlobalStyle';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
-    const boardSize = Math.min(width, 400);
+
     return (
-        <SafeAreaView sx={{ display: 'flex', flex: 1, alignItems: 'center',flexDirection: 'column', justifyContent: 'center' }}>
-            <Pressable
-                sx={{ padding: 2, borderRadius: 4 }}
-                onPress={() => navigation.navigate('Game')}
+        <SafeAreaView
+            style={{
+                width: '100%',
+                flex: 1,
+            }}
+        >
+            <StatusBar backgroundColor={'#181818'} barStyle={'light-content'} />
+            <View
+                style={{
+                    minHeight: Dimensions.get('window').height,
+                    backgroundColor: Color.backgroundColor,
+                }}
             >
-                <Text
-                    sx={{
-                        color: 'white',
-                        textAlign: 'center',
-                        textTransform: 'uppercase',
-                        fontWeight: 500,
-                    }}
-                >
-                    Play Now
-                </Text>
-            </Pressable>
+                {/* Coins and Watch Ads */}
+
+                <View>
+                    <View>
+                        <Image
+                            style={{
+                                width: 50,
+                                height: 50,
+                            }}
+                            contentFit='contain'
+                            source={require('../../assets/coins-in-hand.png')}
+                        />
+                    </View>
+                </View>
+            </View>
         </SafeAreaView>
     );
 };
