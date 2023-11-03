@@ -10,6 +10,9 @@ import Home from './screens/Home';
 import PvP from './screens/PvP';
 import PvAi from './screens/PvAi';
 import "expo-dev-client";
+import Lobby from './screens/Lobby';
+import CreateLobby from './screens/CreateLobby';
+import InsideLobby from './screens/InsideLobby';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +38,9 @@ const App = () => {
                     <Stack.Screen name='Game' component={Game} options={{ headerShown: false }}/>
                     <Stack.Screen name='PvP' component={PvP} options={{ headerShown: false }}/>
                     <Stack.Screen name='PvAi' component={PvAi} options={{ headerShown: false }}/>
+                    <Stack.Screen name='Lobby' component={Lobby} options={{ headerShown: false }}/>
+                    <Stack.Screen name='CreateLobby' component={CreateLobby} options={{ headerShown: false }}/>
+                    <Stack.Screen name='InsideLobby' component={InsideLobby} options={{ headerShown: false }}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </DripsyProvider>

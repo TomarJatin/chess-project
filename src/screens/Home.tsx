@@ -22,6 +22,19 @@ const Home = ({ navigation }) => {
         console.log("button clicked");
     }
 
+    const handleLobbyClick = () => {
+        console.log("Lobby clicked");
+        navigation.navigate("Lobby");
+    }
+
+    const handleCreateRoom = () => {
+        navigation.navigate("CreateLobby");
+    }
+
+    const handleJoinRoom = () => {
+        navigation.navigate("Lobby");
+    }
+
     return (
         <SafeAreaView
             style={{
@@ -38,7 +51,8 @@ const Home = ({ navigation }) => {
                             minHeight: Dimensions.get('window').height,
                             backgroundColor: Color.backgroundColor,
                             paddingHorizontal: 15,
-                            paddingVertical: 20,
+                            paddingTop: 20,
+                            paddingBottom: 50
                         }}
                     >
                         {/* Coins and Watch Ads */}
@@ -287,12 +301,12 @@ const Home = ({ navigation }) => {
                                             marginTop: 20,
                                         }}
                                     >
-                                        <GeneralButton onPress={handleClick}
+                                        <GeneralButton onPress={handleCreateRoom}
                                             width={120}
                                             paddingVertical={6}
                                             title='Create Room'
                                         />
-                                        <GeneralButton onPress={handleClick}
+                                        <GeneralButton onPress={handleJoinRoom}
                                             width={120}
                                             paddingVertical={6}
                                             title='Enter Room'
@@ -315,7 +329,7 @@ const Home = ({ navigation }) => {
                 }}
             >
                 <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Home' />
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Lobby' />
+                <GeneralButton onPress={handleLobbyClick} width={68} paddingVertical={6} title='Lobby' />
                 <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Watch' />
                 <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='More' />
             </View>

@@ -4,7 +4,7 @@ import { Color, FontSize } from '../../../GlobalStyle';
 
 export default function GeneralButton(props: {
     title: string,
-    width: number,
+    width: any,
     paddingVertical: number,
     onPress: any
 }) {
