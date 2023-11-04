@@ -14,26 +14,29 @@ import { Image } from 'expo-image';
 import EmptyBoard from '../components/EmptyBoard';
 import { Color, FontSize } from '../../GlobalStyle';
 import GeneralButton from '../components/General/Button';
+import { useContext } from 'react';
+import { GameContext } from '../contexts';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
+    const { setSelectedMode, setTimer } = useContext(GameContext);
 
     const handleClick = () => {
-        console.log("button clicked");
-    }
+        console.log('button clicked');
+    };
 
     const handleLobbyClick = () => {
-        console.log("Lobby clicked");
-        navigation.navigate("Lobby");
-    }
+        console.log('Lobby clicked');
+        navigation.navigate('Lobby');
+    };
 
     const handleCreateRoom = () => {
-        navigation.navigate("CreateLobby");
-    }
+        navigation.navigate('CreateLobby');
+    };
 
     const handleJoinRoom = () => {
-        navigation.navigate("Lobby");
-    }
+        navigation.navigate('Lobby');
+    };
 
     return (
         <SafeAreaView
@@ -52,7 +55,7 @@ const Home = ({ navigation }) => {
                             backgroundColor: Color.backgroundColor,
                             paddingHorizontal: 15,
                             paddingTop: 20,
-                            paddingBottom: 50
+                            paddingBottom: 50,
                         }}
                     >
                         {/* Coins and Watch Ads */}
@@ -160,17 +163,32 @@ const Home = ({ navigation }) => {
                                             marginTop: 20,
                                         }}
                                     >
-                                        <GeneralButton onPress={handleClick}
+                                        <GeneralButton
+                                            onPress={() => {
+                                                setSelectedMode('Online');
+                                                setTimer(5);
+                                                navigation.navigate('Game');
+                                            }}
                                             width={120}
                                             paddingVertical={6}
                                             title='5min Match'
                                         />
-                                        <GeneralButton onPress={handleClick}
+                                        <GeneralButton
+                                            onPress={() => {
+                                                setSelectedMode('Online');
+                                                setTimer(10);
+                                                navigation.navigate('Game');
+                                            }}
                                             width={120}
                                             paddingVertical={6}
                                             title='10min Match'
                                         />
-                                        <GeneralButton onPress={handleClick}
+                                        <GeneralButton
+                                            onPress={() => {
+                                                setSelectedMode('Online');
+                                                setTimer(15);
+                                                navigation.navigate('Game');
+                                            }}
                                             width={120}
                                             paddingVertical={6}
                                             title='15min Match'
@@ -181,7 +199,15 @@ const Home = ({ navigation }) => {
                         </TouchableOpacity>
 
                         {/* Play with ai card */}
-                        <TouchableOpacity activeOpacity={0.5} style={{ marginTop: 30 }}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                setSelectedMode('Ai');
+                                setTimer(5);
+                                navigation.navigate('Game');
+                            }}
+                            activeOpacity={0.5}
+                            style={{ marginTop: 30 }}
+                        >
                             <ImageBackground
                                 source={require('../../assets/bg.png')}
                                 resizeMode='cover'
@@ -301,12 +327,14 @@ const Home = ({ navigation }) => {
                                             marginTop: 20,
                                         }}
                                     >
-                                        <GeneralButton onPress={handleCreateRoom}
+                                        <GeneralButton
+                                            onPress={handleCreateRoom}
                                             width={120}
                                             paddingVertical={6}
                                             title='Create Room'
                                         />
-                                        <GeneralButton onPress={handleJoinRoom}
+                                        <GeneralButton
+                                            onPress={handleJoinRoom}
                                             width={120}
                                             paddingVertical={6}
                                             title='Enter Room'
@@ -329,7 +357,12 @@ const Home = ({ navigation }) => {
                 }}
             >
                 <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Home' />
-                <GeneralButton onPress={handleLobbyClick} width={68} paddingVertical={6} title='Lobby' />
+                <GeneralButton
+                    onPress={handleLobbyClick}
+                    width={68}
+                    paddingVertical={6}
+                    title='Lobby'
+                />
                 <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Watch' />
                 <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='More' />
             </View>

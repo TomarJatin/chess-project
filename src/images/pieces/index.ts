@@ -1,16 +1,16 @@
 const PieceImages = {
-    BR: require('./black_rook.png'),
-    BQ: require('./black_queen.png'),
-    BP: require('./black_pawn.png'),
-    BK: require('./black_king.png'),
-    BN: require('./black_knight.png'),
-    BB: require('./black_bishop.png'),
-    WR: require('./white_rook.png'),
-    WQ: require('./white_queen.png'),
-    WP: require('./white_pawn.png'),
-    WK: require('./white_king.png'),
-    WN: require('./white_knight.png'),
-    WB: require('./white_bishop.png'),
+    BR: require('./black_rook.svg'),
+    BQ: require('./black_queen.svg'),
+    BP: require('./black_pawn.svg'),
+    BK: require('./black_king.svg'),
+    BN: require('./black_knight.svg'),
+    BB: require('./black_bishop.svg'),
+    WR: require('./white_rook.svg'),
+    WQ: require('./white_queen.svg'),
+    WP: require('./white_pawn.svg'),
+    WK: require('./white_king.svg'),
+    WN: require('./white_knight.svg'),
+    WB: require('./white_bishop.svg'),
 };
 
 export default PieceImages;

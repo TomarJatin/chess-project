@@ -1,4 +1,4 @@
-import { View } from 'dripsy';
+import { View } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 
 const BOARD_SIZE = 8;
@@ -6,7 +6,7 @@ const BOARD_SIZE = 8;
 const EmptyBoard = ({ size }) => {
     return (
         <View
-            sx={{
+            style={{
                 width: size,
                 height: size,
                 backgroundColor: '#ccc',
@@ -23,11 +23,11 @@ const EmptyBoard = ({ size }) => {
                 renderItem={({ item: index }) => {
                     const col = Math.floor(index / BOARD_SIZE);
                     const row = index % BOARD_SIZE;
-                    const color = (row + col) % 2 === 0 ? '#eeeed2' : '#769656';
+                    const color = (row + col) % 2 === 0 ? '#B7C0D8' : '#E8EDF9';
                     return (
                         <View
                             key={index.toString()}
-                            sx={{
+                            style={{
                                 width: size / BOARD_SIZE,
                                 height: size / BOARD_SIZE,
                                 backgroundColor: color,

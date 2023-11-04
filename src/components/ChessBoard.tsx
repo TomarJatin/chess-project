@@ -1,18 +1,17 @@
-import { View } from 'dripsy';
-import { useEffect, useState } from 'react';
-import { useWindowDimensions, Text } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import { useWindowDimensions, Text, View } from 'react-native';
 import useChess from '../hooks/useChess';
 import EmptyBoard from './EmptyBoard';
 import Moves from './Moves';
 import Toast from 'react-native-simple-toast';
 import Pieces from './Pieces';
 import { Worklets } from 'react-native-worklets-core';
+import { Color } from '../../GlobalStyle';
+import { GameContext } from '../contexts';
 
 // ["_board", "_turn", "_header", "_kings", "_epSquare", "_halfMoves", "_moveNumber", "_history", "_comments", "_castling"]
 
-
 const checkGameOver = (chess) => {
-    
     if (chess.isGameOver()) {
         if (chess.turn() === 'b' && chess.isCheckmate()) {
             Toast.show('You won', Toast.LONG);
@@ -117,7 +116,7 @@ let pstOpponent = { w: pst_b, b: pst_w };
 let pstSelf = { w: pst_w, b: pst_b };
 
 function evaluateMyBoard(game, move, prevSum, color) {
-    'worklet'
+    'worklet';
     if (game.isCheckmate()) {
         // Opponent is in checkmate (good for us)
         if (move.color === color) {
@@ -201,6 +200,7 @@ function evaluateMyBoard(game, move, prevSum, color) {
 const Chess = () => {
     const { width } = useWindowDimensions();
     const chess = useChess();
+    const { setTimer, selectedMode } = useContext(GameContext);
     let STACK_SIZE = 100; // maximum size of undo stack
     const [moveTime, setMoveTime] = useState(0);
     const [positionsPerS, setPositionPerS] = useState(0);
@@ -213,7 +213,7 @@ const Chess = () => {
     checkGameOver(chess);
 
     function minMax(game, depth, alpha, beta, isMaximizingPlayer, sum, color) {
-        'worklet'
+        'worklet';
         setPositionCount((count) => count + 1);
         let children = game.moves({ verbose: true });
 
@@ -279,7 +279,7 @@ const Chess = () => {
     }
 
     function getBestMove(game, color, currSum) {
-        'worklet'
+        'worklet';
         setPositionCount(0);
         let depth = 1;
 
@@ -322,9 +322,8 @@ const Chess = () => {
     // }
 
     const AiTurn = () => {
-        'worklet'
+        'worklet';
         if (!chess.isGameOver() && chess.turn() === 'b') {
-           
             // console.log("move.....", getBestMove(chess, 'b', globalSum));
             // console.log("move: ", move, "to : ", to, "captured: ", captured);
             const move = getBestMove(chess, 'b', globalSum);
@@ -333,8 +332,7 @@ const Chess = () => {
                 const _globalSum = evaluateMyBoard(chess, move[0], globalSum, 'b');
                 setGlobalSum(_globalSum);
                 setAiRunning(false);
-            }
-            else{
+            } else {
                 const moves = chess.moves({ verbose: true });
                 const _move = moves[Math.floor(Math.random() * moves.length)];
                 chess.move(_move);
@@ -342,7 +340,6 @@ const Chess = () => {
             }
         }
     };
-
 
     const handleSelectPiece = (square) => {
         const moves = chess.moves({ square: square, verbose: true });
@@ -358,14 +355,14 @@ const Chess = () => {
         setGlobalSum(_globalSum);
         chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
         setVisibleMoves([]);
-        setTimeout(AiTurn, 200);
-        setAiRunning(true);
+        if (selectedMode === 'Ai') {
+            setTimeout(AiTurn, 200);
+            setAiRunning(true);
+        }
     };
 
     return (
-        <View sx={{ position: 'relative' }}>
-            <Text style={{color: "#fff", marginBottom: 30, textAlign: "center"}}>{aiRunning ? "Ai is thinking...": "Your turn"}</Text>
-            <Text style={{color: "#fff", marginBottom: 30, textAlign: "center"}}>Your Advantage: {globalSum === 0 ? globalSum : -globalSum}</Text>
+        <View style={{ position: 'relative', backgroundColor: Color.backgroundColor }}>
             <EmptyBoard size={boardSize} />
             <Pieces board={chess.board()} onSelectPiece={handleSelectPiece} size={boardSize} />
             <Moves visibleMoves={visibleMoves} onSelectMove={handleSelectMove} size={boardSize} />

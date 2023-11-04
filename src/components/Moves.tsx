@@ -1,4 +1,4 @@
-import { View } from 'dripsy';
+import { View } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
@@ -12,16 +12,16 @@ const Moves = ({ visibleMoves, size, onSelectMove }) => {
         return (
             <TouchableWithoutFeedback onPressOut={() => onSelectMove(move)} key={`move-${to}-${Math.random()*1000}`}>
                 <View
-                    sx={{ position: 'absolute', width: size / 8, height: size / 8, left, bottom }}
+                    style={{ position: 'absolute', width: size / 8, height: size / 8, left, bottom }}
                 >
                     <Svg height='100%' width='100%' viewBox='0 0 100 100'>
                         <Circle
                             cx='50'
                             cy='50'
-                            r={captured ? '40' : '20'}
-                            fill={captured ? 'none' : 'black'}
+                            r={captured ? '40' : '25'}
+                            fill={captured ? 'none' : '#7B61FF'}
                             fillOpacity={captured ? undefined : '0.2'}
-                            stroke={captured ? 'black' : undefined}
+                            stroke={captured ? '#7B61FF' : undefined}
                             strokeOpacity={captured ? '0.2' : undefined}
                             strokeWidth={captured ? '10' : undefined}
                         />

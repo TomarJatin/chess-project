@@ -1,9 +1,9 @@
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useContext } from 'react';
-import Chess from '../components/ChessBoard';
-import { Color } from '../../GlobalStyle';
-import { GameContext } from '../contexts';
+import Chess from '../../components/ChessBoard';
+import { Color } from '../../../GlobalStyle';
+import { GameContext } from '../../contexts';
 
 const Game = () => {
     const { selectedMode, timer } = useContext(GameContext);

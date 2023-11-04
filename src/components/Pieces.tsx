@@ -1,6 +1,6 @@
 import PieceImages from '../images/pieces';
 
-import { Image } from 'dripsy';
+import { Image } from 'expo-image';
 import { TouchableWithoutFeedback } from 'react-native';
 
 const Pieces = ({ board, size, onSelectPiece }) => {
@@ -19,7 +19,7 @@ const Pieces = ({ board, size, onSelectPiece }) => {
                     onPress={() => onSelectPiece(square)}
                 >
                     <Image
-                        sx={{
+                        style={{
                             position: 'absolute',
                             width: cellSize,
                             height: cellSize,
