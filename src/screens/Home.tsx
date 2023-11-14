@@ -165,7 +165,7 @@ const Home = ({ navigation }) => {
                                     >
                                         <GeneralButton
                                             onPress={() => {
-                                                setSelectedMode('Online');
+                                                setSelectedMode('PvP');
                                                 setTimer(5);
                                                 navigation.navigate('Game');
                                             }}

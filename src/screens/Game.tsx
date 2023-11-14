@@ -4,25 +4,22 @@ import React, { useContext } from 'react';
 import Chess from '../components/ChessBoard';
 import { Color } from '../../GlobalStyle';
 import { GameContext } from '../contexts';
+import PvP from '../components/Game/PvP';
+import Online from '../components/Game/Online';
+import Ai from '../components/Game/Ai';
 
 const Game = () => {
     const { selectedMode, timer } = useContext(GameContext);
 
-    return (
-        <SafeAreaView style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
-            <View
-                style={{
-                    display: 'flex',
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: Color.backgroundColor,
-                }}
-            >
-                <Chess />
-            </View>
-        </SafeAreaView>
-    );
+    if(selectedMode === "PvP"){
+        return <PvP />
+    }
+    else if(selectedMode === "Online"){
+        return <Online />
+    }
+    else{
+        return <Ai />
+    }
 };
 
 export default Game;
