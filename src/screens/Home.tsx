@@ -16,6 +16,7 @@ import { Color, FontSize } from '../../GlobalStyle';
 import GeneralButton from '../components/General/Button';
 import { useContext } from 'react';
 import { GameContext } from '../contexts';
+import BottomNav from '../components/General/BottomNav';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
@@ -346,26 +347,7 @@ const Home = ({ navigation }) => {
                     </View>
                 )}
             />
-            <View
-                style={{
-                    width: '100%',
-                    padding: 20,
-                    position: 'absolute',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    bottom: 0,
-                }}
-            >
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Home' />
-                <GeneralButton
-                    onPress={handleLobbyClick}
-                    width={68}
-                    paddingVertical={6}
-                    title='Lobby'
-                />
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Watch' />
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='More' />
-            </View>
+            <BottomNav />
         </SafeAreaView>
     );
 };

@@ -3,6 +3,7 @@ import { View, Text, TextInput } from 'dripsy';
 import { Dimensions } from 'react-native';
 import { Color, FontSize } from '../../GlobalStyle';
 import GeneralButton from '../components/General/Button';
+import BottomNav from '../components/General/BottomNav';
 
 export default function Lobby({ navigation }) {
 
@@ -110,21 +111,7 @@ export default function Lobby({ navigation }) {
                 </View>
 
             </View>
-            <View
-                style={{
-                    width: '100%',
-                    padding: 20,
-                    position: 'absolute',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    bottom: 0,
-                }}
-            >
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Home' />
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Lobby' />
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Watch' />
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='More' />
-            </View>
+           <BottomNav />
         </SafeAreaView>
     );
 }

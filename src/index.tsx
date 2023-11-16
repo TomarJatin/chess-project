@@ -12,6 +12,11 @@ import Lobby from './screens/Lobby';
 import CreateLobby from './screens/CreateLobby';
 import InsideLobby from './screens/InsideLobby';
 import { GameProvider } from './contexts';
+import More from './screens/More';
+import Stats from './screens/Stats';
+import Profile from './screens/Profile';
+import Sound from './screens/Sound';
+import Personalization from './screens/Presonalization';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,6 +61,31 @@ const App = () => {
                         <Stack.Screen
                             name='InsideLobby'
                             component={InsideLobby}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name='More'
+                            component={More}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name='Sound'
+                            component={Sound}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name='Profile'
+                            component={Profile}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name='Stats'
+                            component={Stats}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name='Personalization'
+                            component={Personalization}
                             options={{ headerShown: false }}
                         />
                     </Stack.Navigator>

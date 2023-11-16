@@ -7,6 +7,7 @@ import { Color, FontSize } from '../../../GlobalStyle';
 import { GameContext } from '../../contexts';
 import GeneralButton from '../General/Button';
 import { useNavigation } from '@react-navigation/native';
+import BottomNav from '../General/BottomNav';
 
 const PvP = () => {
     const navigation = useNavigation();
@@ -143,26 +144,7 @@ const PvP = () => {
                 </View>
                 
             </View>
-            <View
-                style={{
-                    width: '100%',
-                    padding: 20,
-                    position: 'absolute',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    bottom: 0,
-                }}
-            >
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Home' />
-                <GeneralButton
-                    onPress={handleLobbyClick}
-                    width={68}
-                    paddingVertical={6}
-                    title='Lobby'
-                />
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='Watch' />
-                <GeneralButton onPress={handleClick} width={68} paddingVertical={6} title='More' />
-            </View>
+            <BottomNav/>
         </SafeAreaView>
     );
 };
