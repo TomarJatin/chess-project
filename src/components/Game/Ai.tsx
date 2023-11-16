@@ -37,6 +37,7 @@ const Ai = () => {
                         width={68}
                         paddingVertical={6}
                         title='Back'
+                        borderRadius={14}
                     />
                     <Text
                         style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.sm }}

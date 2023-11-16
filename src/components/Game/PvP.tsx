@@ -36,6 +36,7 @@ const PvP = () => {
                         onPress={() => navigation.goBack()}
                         width={68}
                         paddingVertical={6}
+                        borderRadius={14}
                         title='Back'
                     />
                     <Text

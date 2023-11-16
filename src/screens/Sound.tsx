@@ -6,10 +6,9 @@ import GeneralButton from '../components/General/Button';
 import BottomNav from '../components/General/BottomNav';
 
 export default function Sound({ navigation }) {
-
     const handleClick = () => {
-        console.log("button clicked");
-    }
+        console.log('button clicked');
+    };
 
     return (
         <SafeAreaView>
@@ -32,6 +31,7 @@ export default function Sound({ navigation }) {
                         width={68}
                         paddingVertical={6}
                         title='Back'
+                        borderRadius={14}
                     />
                     <Text
                         style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.sm }}
@@ -106,12 +106,17 @@ export default function Sound({ navigation }) {
                     />
                 </View>
 
-                <View style={{width: "100%", marginTop: 100}}>
-                <GeneralButton onPress={handleClick} width={"100%"} paddingVertical={10} title='Enter' />
+                <View style={{ width: '100%', marginTop: 100 }}>
+                    <GeneralButton
+                        onPress={handleClick}
+                        width={'100%'}
+                        paddingVertical={10}
+                        title='Enter'
+                        borderRadius={14}
+                    />
                 </View>
-
             </View>
-           <BottomNav />
+            <BottomNav />
         </SafeAreaView>
     );
 }

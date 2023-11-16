@@ -7,10 +7,9 @@ import GeneralButton from '../components/General/Button';
 import BottomNav from '../components/General/BottomNav';
 
 export default function CreateLobby({ navigation }) {
-
     const handleClick = () => {
-        console.log("button clicked");
-    }
+        console.log('button clicked');
+    };
 
     return (
         <SafeAreaView>
@@ -33,6 +32,7 @@ export default function CreateLobby({ navigation }) {
                         width={68}
                         paddingVertical={6}
                         title='Back'
+                        borderRadius={14}
                     />
                     <Text
                         style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.sm }}
@@ -41,13 +41,12 @@ export default function CreateLobby({ navigation }) {
                     </Text>
                 </View>
 
-
                 <View
                     style={{
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 5,
-                        marginTop: 30
+                        marginTop: 30,
                     }}
                 >
                     <Image
@@ -146,23 +145,24 @@ export default function CreateLobby({ navigation }) {
                         secureTextEntry={true}
                     />
                 </View>
-
-                
-
             </View>
-            <View style={{
-                position: "absolute",
-                width: "100%",
-                padding: 15,
-                zIndex: 10,
-                bottom: 80
-            }}>
-            <View style={{
-                    width: "100%",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between"
-                }}>
+            <View
+                style={{
+                    position: 'absolute',
+                    width: '100%',
+                    padding: 15,
+                    zIndex: 10,
+                    bottom: 80,
+                }}
+            >
+                <View
+                    style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                    }}
+                >
                     <View>
                         <Text
                             style={{
@@ -183,11 +183,23 @@ export default function CreateLobby({ navigation }) {
                             200
                         </Text>
                     </View>
-                    <GeneralButton onPress={handleClick} width={100} paddingVertical={10} title='Watch Ads' />
+                    <GeneralButton
+                        onPress={handleClick}
+                        width={100}
+                        paddingVertical={10}
+                        title='Watch Ads'
+                        borderRadius={14}
+                    />
                 </View>
 
-                <View style={{ width: "100%", marginTop: 20 }}>
-                    <GeneralButton onPress={handleClick} width={"100%"} paddingVertical={10} title='Enter' />
+                <View style={{ width: '100%', marginTop: 20 }}>
+                    <GeneralButton
+                        onPress={handleClick}
+                        width={'100%'}
+                        paddingVertical={10}
+                        title='Enter'
+                        borderRadius={14}
+                    />
                 </View>
             </View>
             <BottomNav />

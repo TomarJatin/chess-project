@@ -1,11 +1,11 @@
 import { TouchableOpacity, Text, ImageBackground, View } from 'react-native';
-import { Color, FontSize } from '../../../GlobalStyle';
 
 
-export default function GeneralButton(props: {
-    title: string,
+export default function ImgButton(props: {
+    children: any,
     width: any,
     paddingVertical: number,
+    paddingHorizontal: number,
     onPress: any,
     borderRadius: any
 }) {
@@ -28,10 +28,11 @@ export default function GeneralButton(props: {
             >
                 <View
                     style={{
-                        paddingVertical: props.paddingVertical
+                        paddingVertical: props.paddingVertical,
+                        paddingHorizontal: props.paddingHorizontal
                     }}
                 >
-                    <Text style={{ textAlign: 'center', color: Color.textColor, fontSize: FontSize.xs13, fontWeight: "800" }}>{props.title}</Text>
+                   {props.children}
                 </View>
             </ImageBackground>
         </TouchableOpacity>

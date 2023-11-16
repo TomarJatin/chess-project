@@ -173,6 +173,7 @@ const Home = ({ navigation }) => {
                                             width={120}
                                             paddingVertical={6}
                                             title='5min Match'
+                                            borderRadius={14}
                                         />
                                         <GeneralButton
                                             onPress={() => {
@@ -183,6 +184,7 @@ const Home = ({ navigation }) => {
                                             width={120}
                                             paddingVertical={6}
                                             title='10min Match'
+                                            borderRadius={14}
                                         />
                                         <GeneralButton
                                             onPress={() => {
@@ -193,6 +195,7 @@ const Home = ({ navigation }) => {
                                             width={120}
                                             paddingVertical={6}
                                             title='15min Match'
+                                            borderRadius={14}
                                         />
                                     </View>
                                 </View>
@@ -333,12 +336,14 @@ const Home = ({ navigation }) => {
                                             width={120}
                                             paddingVertical={6}
                                             title='Create Room'
+                                            borderRadius={14}
                                         />
                                         <GeneralButton
                                             onPress={handleJoinRoom}
                                             width={120}
                                             paddingVertical={6}
                                             title='Enter Room'
+                                            borderRadius={14}
                                         />
                                     </View>
                                 </View>

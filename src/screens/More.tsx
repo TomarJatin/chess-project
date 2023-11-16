@@ -1,15 +1,19 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, TextInput } from 'dripsy';
-import { Dimensions } from 'react-native';
+import { Dimensions, TouchableOpacity } from 'react-native';
 import { Color, FontSize } from '../../GlobalStyle';
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import GeneralButton from '../components/General/Button';
 import BottomNav from '../components/General/BottomNav';
+import ImgButton from '../components/General/ImgButton';
 
 export default function More({ navigation }) {
-
     const handleClick = () => {
-        console.log("button clicked");
-    }
+        console.log('button clicked');
+    };
 
     return (
         <SafeAreaView>
@@ -32,86 +36,195 @@ export default function More({ navigation }) {
                         width={68}
                         paddingVertical={6}
                         title='Back'
+                        borderRadius={14}
                     />
                     <Text
                         style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.sm }}
                     >
-                        Lobby
+                        More
                     </Text>
                 </View>
 
-                {/* Enter details */}
-                <Text
+                {/* Options */}
+                <View
                     style={{
-                        color: Color.textColor,
-                        fontWeight: '800',
-                        fontSize: FontSize.md,
+                        width: '100%',
+                        flexDirection: 'column',
+                        gap: 28,
                         marginTop: 40,
                     }}
                 >
-                    Enter Room Details
-                </Text>
-
-                <View
-                    style={{
-                        marginTop: 20,
-                        paddingVertical: 5,
-                        paddingHorizontal: 20,
-                        borderRadius: 100,
-                        borderWidth: 2,
-                        borderColor: '#60CBFA',
-                    }}
-                >
-                    <Text
+                    <TouchableOpacity
+                        activeOpacity={0.5}
                         style={{
-                            color: Color.textColor,
-                            fontWeight: '800',
-                            fontSize: FontSize.xxs,
-                            marginBottom: 6,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 15,
+                            paddingVertical: 8,
                         }}
                     >
-                        Room ID
-                    </Text>
-                    <TextInput
-                        style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.xs }}
-                        placeholder='Please specify others.'
-                        placeholderTextColor={Color.textColor}
-                    />
-                </View>
-
-                <View
-                    style={{
-                        marginTop: 20,
-                        paddingVertical: 5,
-                        paddingHorizontal: 20,
-                        borderRadius: 100,
-                        borderWidth: 2,
-                        borderColor: '#60CBFA',
-                    }}
-                >
-                    <Text
+                        <ImgButton
+                            children={<Ionicons name='person' size={20} color='white' />}
+                            width={34}
+                            paddingHorizontal={7}
+                            paddingVertical={6}
+                            onPress={() => {}}
+                            borderRadius={17}
+                        />
+                        <Text
+                            style={{
+                                color: Color.textColor,
+                                fontSize: FontSize.xs13,
+                                fontWeight: '800',
+                            }}
+                        >
+                            Profile
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={0.5}
                         style={{
-                            color: Color.textColor,
-                            fontWeight: '800',
-                            fontSize: FontSize.xxs,
-                            marginBottom: 6,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 15,
+                            paddingVertical: 8,
                         }}
                     >
-                        Password
-                    </Text>
-                    <TextInput
-                        style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.xs }}
-                        placeholder='Please specify others.'
-                        placeholderTextColor={Color.textColor}
-                    />
+                        <ImgButton
+                            children={<FontAwesome5 name="swatchbook" size={20} color='white' />}
+                            width={34}
+                            paddingHorizontal={7}
+                            paddingVertical={6}
+                            onPress={() => {}}
+                            borderRadius={17}
+                        />
+                        <Text
+                            style={{
+                                color: Color.textColor,
+                                fontSize: FontSize.xs13,
+                                fontWeight: '800',
+                            }}
+                        >
+                            Theme & Personalize
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={0.5}
+                        style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 15,
+                            paddingVertical: 8,
+                        }}
+                    >
+                        <ImgButton
+                            children={<FontAwesome name="shopping-cart" size={20} color='white' />}
+                            width={34}
+                            paddingHorizontal={7}
+                            paddingVertical={6}
+                            onPress={() => {}}
+                            borderRadius={17}
+                        />
+                        <Text
+                            style={{
+                                color: Color.textColor,
+                                fontSize: FontSize.xs13,
+                                fontWeight: '800',
+                            }}
+                        >
+                            Shop
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={0.5}
+                        style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 15,
+                            paddingVertical: 8,
+                        }}
+                    >
+                        <ImgButton
+                            children={<FontAwesome name="volume-up" size={20} color='white' />}
+                            width={34}
+                            paddingHorizontal={7}
+                            paddingVertical={6}
+                            onPress={() => {}}
+                            borderRadius={17}
+                        />
+                        <Text
+                            style={{
+                                color: Color.textColor,
+                                fontSize: FontSize.xs13,
+                                fontWeight: '800',
+                            }}
+                        >
+                            Sound
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={0.5}
+                        style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 15,
+                            paddingVertical: 8,
+                        }}
+                    >
+                        <ImgButton
+                            children={<FontAwesome name="exclamation-circle" size={20} color='white' />}
+                            width={34}
+                            paddingHorizontal={7}
+                            paddingVertical={6}
+                            onPress={() => {}}
+                            borderRadius={17}
+                        />
+                        <Text
+                            style={{
+                                color: Color.textColor,
+                                fontSize: FontSize.xs13,
+                                fontWeight: '800',
+                            }}
+                        >
+                            Help
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={0.5}
+                        style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: 15,
+                            paddingVertical: 8,
+                        }}
+                    >
+                        <ImgButton
+                            children={<MaterialIcons name="logout" size={20} color='white' />}
+                            width={34}
+                            paddingHorizontal={7}
+                            paddingVertical={6}
+                            onPress={() => {}}
+                            borderRadius={17}
+                        />
+                        <Text
+                            style={{
+                                color: Color.textColor,
+                                fontSize: FontSize.xs13,
+                                fontWeight: '800',
+                            }}
+                        >
+                            Logout
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-
-                <View style={{width: "100%", marginTop: 100}}>
-                <GeneralButton onPress={handleClick} width={"100%"} paddingVertical={10} title='Enter' />
-                </View>
-
             </View>
-           <BottomNav />
+            <BottomNav />
         </SafeAreaView>
     );
 }
