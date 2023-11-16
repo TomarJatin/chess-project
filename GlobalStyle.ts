@@ -1,7 +1,9 @@
 export const Color = {
     backgroundColor: "#181818",
     textColor: "#fff",
-    card: "#1F3664"
+    card: "#1F3664",
+    greenText: "#25FF6F",
+    redText: "#FF4D4D"
 }
 
 export const FontSize = {

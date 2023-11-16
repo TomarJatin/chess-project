@@ -1,7 +1,8 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, TextInput } from 'dripsy';
-import { Dimensions } from 'react-native';
+import { Dimensions, FlatList, ImageBackground, TouchableOpacity } from 'react-native';
 import { Color, FontSize } from '../../GlobalStyle';
+import { Image } from 'expo-image';
 import GeneralButton from '../components/General/Button';
 import BottomNav from '../components/General/BottomNav';
 
@@ -24,6 +25,7 @@ export default function Stats({ navigation }) {
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 14,
+                        marginBottom: 30
                     }}
                 >
                     <GeneralButton
@@ -36,85 +38,166 @@ export default function Stats({ navigation }) {
                     <Text
                         style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.sm }}
                     >
-                        Lobby
+                        Statistics
                     </Text>
                 </View>
 
-                {/* Enter details */}
-                <Text
+                {/* Stats */}
+
+                <ImageBackground
+                    source={require('../../assets/bg.png')}
+                    resizeMode='cover'
                     style={{
-                        color: Color.textColor,
-                        fontWeight: '800',
-                        fontSize: FontSize.md,
-                        marginTop: 40,
+                        width: '100%',
+                        borderRadius: 14,
+                        overflow: 'hidden',
                     }}
                 >
-                    Enter Room Details
+                    <View
+                        style={{
+                            paddingHorizontal: 26,
+                            paddingVertical: 20,
+                        }}
+                    >
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                width: "100%",
+                                justifyContent: "space-between",
+                                alignItems: 'center',
+                            }}
+                        >
+                            <View>
+                                <Text
+                                    style={{
+                                        color: Color.textColor,
+                                        fontSize: FontSize.xs,
+                                        fontWeight: '500',
+                                        textAlign: "center"
+                                    }}
+                                >
+                                    Games
+                                </Text>
+                                <Text
+                                    style={{
+                                        color: Color.textColor,
+                                        fontSize: FontSize.md,
+                                        fontWeight: '800',
+                                        textAlign: "center"
+                                    }}
+                                >
+                                    20
+                                </Text>
+                            </View>
+                            <View>
+                                <Text
+                                    style={{
+                                        color: Color.textColor,
+                                        fontSize: FontSize.xs,
+                                        fontWeight: '500',
+                                        textAlign: "center"
+                                    }}
+                                >
+                                    Coins Earned
+                                </Text>
+                                <Text
+                                    style={{
+                                        color: Color.textColor,
+                                        fontSize: FontSize.md,
+                                        fontWeight: '800',
+                                        textAlign: "center"
+                                    }}
+                                >
+                                    2000
+                                </Text>
+                            </View>
+                            <View>
+                                <Text
+                                    style={{
+                                        color: Color.textColor,
+                                        fontSize: FontSize.xs,
+                                        fontWeight: '500',
+                                        textAlign: "center"
+                                    }}
+                                >
+                                    Wins
+                                </Text>
+                                <Text
+                                    style={{
+                                        color: Color.textColor,
+                                        fontSize: FontSize.md,
+                                        fontWeight: '800',
+                                        textAlign: "center"
+                                    }}
+                                >
+                                    2
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </ImageBackground>
+
+                {/* All Games */}
+                <Text style={{
+                    color: Color.textColor,
+                    fontWeight: "800",
+                    fontSize: FontSize.md,
+                    marginTop: 27
+                }}>
+                    All Games
                 </Text>
 
-                <View
-                    style={{
-                        marginTop: 20,
-                        paddingVertical: 5,
-                        paddingHorizontal: 20,
-                        borderRadius: 100,
-                        borderWidth: 2,
-                        borderColor: '#60CBFA',
-                    }}
-                >
-                    <Text
-                        style={{
-                            color: Color.textColor,
-                            fontWeight: '800',
-                            fontSize: FontSize.xxs,
-                            marginBottom: 6,
-                        }}
-                    >
-                        Room ID
-                    </Text>
-                    <TextInput
-                        style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.xs }}
-                        placeholder='Please specify others.'
-                        placeholderTextColor={Color.textColor}
-                    />
-                </View>
-
-                <View
-                    style={{
-                        marginTop: 20,
-                        paddingVertical: 5,
-                        paddingHorizontal: 20,
-                        borderRadius: 100,
-                        borderWidth: 2,
-                        borderColor: '#60CBFA',
-                    }}
-                >
-                    <Text
-                        style={{
-                            color: Color.textColor,
-                            fontWeight: '800',
-                            fontSize: FontSize.xxs,
-                            marginBottom: 6,
-                        }}
-                    >
-                        Password
-                    </Text>
-                    <TextInput
-                        style={{ color: Color.textColor, fontWeight: '800', fontSize: FontSize.xs }}
-                        placeholder='Please specify others.'
-                        placeholderTextColor={Color.textColor}
-                    />
-                </View>
-
-                <View style={{ width: '100%', marginTop: 100 }}>
-                    <GeneralButton
-                        onPress={handleClick}
-                        width={'100%'}
-                        paddingVertical={10}
-                        title='Enter'
-                        borderRadius={14}
-                    />
-                </View>
+                <FlatList 
+                data={["1"]}
+                renderItem={() => (
+                    <View style={{
+                        marginBottom: 20,
+                        width: "100%",
+                        paddingVertical: 8,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between"
+                    }}>
+                        <View style={{
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        gap: 14
+                                    }}>
+                                    <Image
+                                            style={{
+                                                width: 34,
+                                                height: 34,
+                                                borderRadius: 17
+                                            }}
+                                            contentFit='contain'
+                                            source={require('../../assets/robot.png')}
+                                        />
+                                        <View>
+                                            <Text style={{color: Color.textColor, fontSize: FontSize.xs13, fontWeight: "800"}}>Ai</Text>
+                                            <Text style={{color: Color.textColor, fontSize: FontSize.xxs, fontWeight: "400", marginTop: 3}}>08:60 Min</Text>
+                                        </View>
+                                        <Image
+                                            style={{
+                                                width: 18,
+                                                height: 12,
+                                            }}
+                                            contentFit='contain'
+                                            source={{uri: "https://cdn.britannica.com/97/1597-004-05816F4E/Flag-India.jpg"}}
+                                        />
+                                    </View>
+                                    <Text style={{
+                                        fontSize: FontSize.xs,
+                                        fontWeight: "800",
+                                        color: Color.greenText
+                                    }}>
+                                        You Won
+                                    </Text>
+                    </View>
+                )}
+                style={{
+                    marginTop: 20
+                }}
+                />
             </View>
             <BottomNav />
         </SafeAreaView>
