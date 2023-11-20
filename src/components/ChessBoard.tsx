@@ -7,11 +7,8 @@ import Toast from 'react-native-simple-toast';
 import Pieces from './Pieces';
 import { Worklets } from 'react-native-worklets-core';
 import { Color } from '../../GlobalStyle';
+import { useRef } from 'react';
 import { GameContext } from '../contexts';
-
-interface ChessBoardProps {
-    color: string;
-}
 
 // ["_board", "_turn", "_header", "_kings", "_epSquare", "_halfMoves", "_moveNumber", "_history", "_comments", "_castling"]
 
@@ -201,10 +198,10 @@ function evaluateMyBoard(game, move, prevSum, color) {
     return prevSum;
 }
 
-const Chess = ({ color }: ChessBoardProps) => {
+const Chess = () => {
     const { width } = useWindowDimensions();
     const chess = useChess();
-    const { setTimer, selectedMode } = useContext(GameContext);
+    const { setTimer, selectedMode, getMessage, color } = useContext(GameContext);
     let STACK_SIZE = 100; // maximum size of undo stack
     const [moveTime, setMoveTime] = useState(0);
     const [positionsPerS, setPositionPerS] = useState(0);
@@ -213,6 +210,15 @@ const Chess = ({ color }: ChessBoardProps) => {
     const [visibleMoves, setVisibleMoves] = useState([]);
     const boardSize = Math.min(width, 400);
     const [aiRunning, setAiRunning] = useState(false);
+    let ws = useRef(
+        new WebSocket(
+            'ws://139.59.94.85:3000/ws/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDM0ODI3MTcsImp0aSI6IjY1NTlhYWFkNzdmYTBmNjA0MDE5YjUwNSJ9.gxJZi_J0gryXCQzF6oRUT-nep6nsSrofZtweoT-M4qk'
+        )
+    ).current;
+
+    ws.onmessage = (e) => {
+        console.log('game message is...: ', e.data);
+    };
 
     checkGameOver(chess);
 
@@ -346,11 +352,12 @@ const Chess = ({ color }: ChessBoardProps) => {
     };
 
     const handleSelectPiece = (square) => {
-        if(chess.turn !== color){
+        console.log(chess.turn());
+        if(chess.turn() !== color){
             return;
         }
         const moves = chess.moves({ square: square, verbose: true });
-        if (moves.length === 0 && chess.turn === color) {
+        if (moves.length === 0 && chess.turn() === color) {
             Toast.show('Your King is in the danger', Toast.SHORT);
         }
         setVisibleMoves(moves);

@@ -20,7 +20,7 @@ import BottomNav from '../components/General/BottomNav';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
-    const { setSelectedMode, setTimer, ws, submitMessage, setColor } = useContext(GameContext);
+    const { setSelectedMode, setTimer, submitMessage, setColor, ws, setMatchId } = useContext(GameContext);
 
     useEffect(() => {
         ws.onopen = () => {
@@ -47,47 +47,44 @@ const Home = ({ navigation }) => {
         navigation.navigate('CreateLobby');
     };
 
-    const checkJoinedMatch = () => {
-        submitMessage({
-            messageType: 'currentMatch',
-        });
-        ws.onmessage = (e) => {
-            console.log('server message is...: ', e.data);
-            if (JSON.parse(e.data).data.matchId && JSON.parse(e.data).data.matchType) {
-                setSelectedMode('Online');
-                if (JSON.parse(e.data).data.matchType === '15min') {
-                    setTimer(15);
-                } else if (JSON.parse(e.data).data.matchType === '10min') {
-                    setTimer(15);
-                } else {
-                    setTimer(5);
-                }
-                setColor('w');
-                navigation.navigate('Game');
-                return true;
-            }
-        };
-        return false;
-    }
-
     const handlePlayOnineClick = (mode: string, timer: number) => {
         setSelectedMode(mode);
         setTimer(timer);
-        const check = checkJoinedMatch();
-        if(!check){
-            submitMessage({
-                messageType: 'roomJoin',
-                data: {
-                    matchType: timer + 'min',
-                },
-            });
+        submitMessage({
+            messageType: 'currentMatch',
+        });
             ws.onmessage = (e) => {
-                console.log('server message is: ', e.data);
+                console.log("message2", e.data);
+                if(JSON.parse(e.data).data.color){
+                    let _color = JSON.parse(e.data).data.color === "white" ? "w" : "b";
+                    console.log("color: ", _color);
+                    setColor(_color);
+                }
+                if(JSON.parse(e.data).data.matchId){
+                    console.log("matchId: ", JSON.parse(e.data).data.matchId);
+                    setMatchId(JSON.parse(e.data).data.matchId)
+                }
+                if(JSON.parse(e.data).data.error && JSON.parse(e.data).data.error === "no match found"){
+                    console.log(JSON.parse(e.data).data.error);
+                    submitMessage({
+                        messageType: 'roomJoin',
+                        data: {
+                            matchType: timer + 'min',
+                        },
+                    });
+                }
+                if(JSON.parse(e.data).data.matchType){
+                    console.log("matchtype: ", JSON.parse(e.data).data.matchType);
+                    if (JSON.parse(e.data).data.matchType === '15min') {
+                        setTimer(15);
+                    } else if (JSON.parse(e.data).data.matchType === '10min') {
+                        setTimer(15);
+                    } else {
+                        setTimer(5);
+                    }
+                }
             };
-            setColor('w');
-            navigation.navigate('Game');
-        }
-        
+            setTimeout(() => navigation.navigate('Game'), 1000);
     };
 
     const handleJoinRoom = () => {

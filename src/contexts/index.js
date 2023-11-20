@@ -11,11 +11,13 @@ const GameProvider = ({ children }) => {
   const [selectedMode, setSelectedMode] = useState("");
   const [timer, setTimer] = useState(5);
   const [color, setColor] = useState("w");
+  const [matchId, setMatchId] = useState("matchId");
   let ws = useRef(
     new WebSocket(
-        'ws://139.59.94.85:3000/ws/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDM0MDg5OTQsImp0aSI6IjY1NTlhYWFkNzdmYTBmNjA0MDE5YjUwNSJ9.C9dmFlRLkfFpjfEDwYKUaaVtyb7VcovIwtlcVDN9VO4'
+        'ws://139.59.94.85:3000/ws/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDM0ODI3MTcsImp0aSI6IjY1NTlhYWFkNzdmYTBmNjA0MDE5YjUwNSJ9.gxJZi_J0gryXCQzF6oRUT-nep6nsSrofZtweoT-M4qk'
     )
 ).current;
+
 
 
 const submitMessage = useCallback((message) => {
@@ -36,10 +38,12 @@ const submitMessage = useCallback((message) => {
         timer,
         ws,
         color,
+        matchId,
         setSelectedMode,
         setTimer,
         submitMessage,
-        setColor
+        setColor,
+        setMatchId
       }}
     >
       {children}

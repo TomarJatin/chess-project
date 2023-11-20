@@ -1,8 +1,9 @@
 import { View, Text, ImageBackground, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Chess from '../../components/ChessBoard';
+import Modal from "react-native-modal";
 import { Color, FontSize } from '../../../GlobalStyle';
 import { GameContext } from '../../contexts';
 import GeneralButton from '../General/Button';
@@ -12,8 +13,14 @@ import BottomNav from '../General/BottomNav';
 const Online = () => {
     const navigation = useNavigation();
     const { selectedMode, timer, color } = useContext(GameContext);
+    const [open, setOpen] = useState("");
+
+    const handleExit = () => {
+        console.log("handleExit");
+    }
 
     return (
+        <>
         <SafeAreaView
             style={{
                 display: 'flex',
@@ -119,7 +126,7 @@ const Online = () => {
                         </View>
                     </ImageBackground>
                     <View style={{ width: '100%', marginVertical: 6 }}>
-                        <Chess color={color} />
+                        <Chess />
                     </View>
                     <ImageBackground
                         source={require('../../../assets/fire.gif')}
@@ -187,8 +194,71 @@ const Online = () => {
                     </ImageBackground>
                 </View>
             </View>
-            <BottomNav />
+            <View
+            style={{
+                width: '100%',
+                padding: 20,
+                position: 'absolute',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                bottom: 0,
+            }}
+        >
+            <GeneralButton
+                onPress={handleExit}
+                width={68}
+                paddingVertical={6}
+                title='Exit'
+                borderRadius={14}
+            />
+            <GeneralButton
+                onPress={() => {}}
+                width={68}
+                paddingVertical={6}
+                title='Info'
+                borderRadius={14}
+            />
+            <GeneralButton
+                onPress={() => setOpen("chat")}
+                width={68}
+                paddingVertical={6}
+                title='Chat'
+                borderRadius={14}
+            />
+            <GeneralButton
+                onPress={() => {}}
+                width={68}
+                paddingVertical={6}
+                title='More'
+                borderRadius={14}
+            />
+        </View>
         </SafeAreaView>
+        <Modal
+        isVisible={open !== ""}
+        onSwipeComplete={() => setOpen("")}
+        onBackdropPress={() => setOpen("")}
+        onBackButtonPress={() => setOpen("")}
+        style={{
+          justifyContent: "flex-end",
+          margin: 0,
+        }}
+      >
+        {open === "chat" && (
+          <View
+            style={{
+              backgroundColor: Color.darkCardInside,
+              padding: 22,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              borderColor: "rgba(0, 0, 0, 0.1)",
+            }}
+          >
+           
+          </View>
+        )}
+      </Modal>
+        </>
     );
 };
 
