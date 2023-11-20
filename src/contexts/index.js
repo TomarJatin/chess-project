@@ -10,7 +10,7 @@ const GameContext = createContext();
 const GameProvider = ({ children }) => {
   const [selectedMode, setSelectedMode] = useState("");
   const [timer, setTimer] = useState(5);
-  const [color, setColor] = useState("w");
+  const [color, setColor] = useState("b");
   const [matchId, setMatchId] = useState("matchId");
   const [prevInstance, setPrevInstance] = useState(null);
   let ws = useRef(

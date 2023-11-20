@@ -215,6 +215,7 @@ const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) =>
     const [visibleMoves, setVisibleMoves] = useState([]);
     const boardSize = Math.min(width, 400);
     const [aiRunning, setAiRunning] = useState(false);
+    const [onLoad, setOnload] = useState(true);
     let ws = useRef(
         new WebSocket(
             'ws://139.59.94.85:3000/ws/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDM0ODI3MTcsImp0aSI6IjY1NTlhYWFkNzdmYTBmNjA0MDE5YjUwNSJ9.gxJZi_J0gryXCQzF6oRUT-nep6nsSrofZtweoT-M4qk'
@@ -225,7 +226,7 @@ const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) =>
         chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
         setYourTimerActive(true);
         setOpponentTimerActive(false);
-        setPrevInstance(chess);
+        setPrevInstance(chess.fen());
     }
 
     ws.onmessage = (e) => {
@@ -396,13 +397,32 @@ const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) =>
         });
         setOpponentTimerActive(true);
         setYourTimerActive(false);
-        setPrevInstance(chess);
+        setPrevInstance(chess.fen());
 
         if (selectedMode === 'Ai') {
             setTimeout(AiTurn, 200);
             setAiRunning(true);
         }
     };
+
+    const loadPrevInstance = () => {
+       
+        chess.load(prevInstance);
+    }
+
+    useEffect(() => {
+        console.log(prevInstance);
+        if(prevInstance && onLoad){
+            loadPrevInstance();
+            setOnload(false);
+            if(color === chess.turn()){
+                setYourTimerActive(true);
+            }
+            else{
+                setOpponentTimerActive(true);
+            }
+        }
+    }, [prevInstance])
 
   
 
