@@ -14,13 +14,25 @@ import { Image } from 'expo-image';
 import EmptyBoard from '../components/EmptyBoard';
 import { Color, FontSize } from '../../GlobalStyle';
 import GeneralButton from '../components/General/Button';
-import { useContext } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { GameContext } from '../contexts';
 import BottomNav from '../components/General/BottomNav';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
-    const { setSelectedMode, setTimer } = useContext(GameContext);
+    const { setSelectedMode, setTimer, ws, submitMessage, setColor } = useContext(GameContext);
+
+    useEffect(() => {
+        ws.onopen = () => {
+            console.log('connection successful');
+        };
+        ws.onclose = (e) => {
+            console.log('closed connection');
+        };
+        ws.onerror = (e) => {
+            console.log('error is', e);
+        };
+    }, []);
 
     const handleClick = () => {
         console.log('button clicked');
@@ -33,6 +45,49 @@ const Home = ({ navigation }) => {
 
     const handleCreateRoom = () => {
         navigation.navigate('CreateLobby');
+    };
+
+    const checkJoinedMatch = () => {
+        submitMessage({
+            messageType: 'currentMatch',
+        });
+        ws.onmessage = (e) => {
+            console.log('server message is...: ', e.data);
+            if (JSON.parse(e.data).data.matchId && JSON.parse(e.data).data.matchType) {
+                setSelectedMode('Online');
+                if (JSON.parse(e.data).data.matchType === '15min') {
+                    setTimer(15);
+                } else if (JSON.parse(e.data).data.matchType === '10min') {
+                    setTimer(15);
+                } else {
+                    setTimer(5);
+                }
+                setColor('w');
+                navigation.navigate('Game');
+                return true;
+            }
+        };
+        return false;
+    }
+
+    const handlePlayOnineClick = (mode: string, timer: number) => {
+        setSelectedMode(mode);
+        setTimer(timer);
+        const check = checkJoinedMatch();
+        if(!check){
+            submitMessage({
+                messageType: 'roomJoin',
+                data: {
+                    matchType: timer + 'min',
+                },
+            });
+            ws.onmessage = (e) => {
+                console.log('server message is: ', e.data);
+            };
+            setColor('w');
+            navigation.navigate('Game');
+        }
+        
     };
 
     const handleJoinRoom = () => {
@@ -165,33 +220,21 @@ const Home = ({ navigation }) => {
                                         }}
                                     >
                                         <GeneralButton
-                                            onPress={() => {
-                                                setSelectedMode('PvP');
-                                                setTimer(5);
-                                                navigation.navigate('Game');
-                                            }}
+                                            onPress={() => handlePlayOnineClick('Online', 5)}
                                             width={120}
                                             paddingVertical={6}
                                             title='5min Match'
                                             borderRadius={14}
                                         />
                                         <GeneralButton
-                                            onPress={() => {
-                                                setSelectedMode('Online');
-                                                setTimer(10);
-                                                navigation.navigate('Game');
-                                            }}
+                                            onPress={() => handlePlayOnineClick('Online', 10)}
                                             width={120}
                                             paddingVertical={6}
                                             title='10min Match'
                                             borderRadius={14}
                                         />
                                         <GeneralButton
-                                            onPress={() => {
-                                                setSelectedMode('Online');
-                                                setTimer(15);
-                                                navigation.navigate('Game');
-                                            }}
+                                            onPress={() => handlePlayOnineClick('Online', 15)}
                                             width={120}
                                             paddingVertical={6}
                                             title='15min Match'

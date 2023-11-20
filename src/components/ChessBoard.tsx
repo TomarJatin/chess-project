@@ -9,6 +9,10 @@ import { Worklets } from 'react-native-worklets-core';
 import { Color } from '../../GlobalStyle';
 import { GameContext } from '../contexts';
 
+interface ChessBoardProps {
+    color: string;
+}
+
 // ["_board", "_turn", "_header", "_kings", "_epSquare", "_halfMoves", "_moveNumber", "_history", "_comments", "_castling"]
 
 const checkGameOver = (chess) => {
@@ -197,7 +201,7 @@ function evaluateMyBoard(game, move, prevSum, color) {
     return prevSum;
 }
 
-const Chess = () => {
+const Chess = ({ color }: ChessBoardProps) => {
     const { width } = useWindowDimensions();
     const chess = useChess();
     const { setTimer, selectedMode } = useContext(GameContext);
@@ -342,8 +346,11 @@ const Chess = () => {
     };
 
     const handleSelectPiece = (square) => {
+        if(chess.turn !== color){
+            return;
+        }
         const moves = chess.moves({ square: square, verbose: true });
-        if (moves.length === 0 && chess.turn === 'w') {
+        if (moves.length === 0 && chess.turn === color) {
             Toast.show('Your King is in the danger', Toast.SHORT);
         }
         setVisibleMoves(moves);

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "933142989356",
+    "project_id": "chess-app-3832a",
+    "storage_bucket": "chess-app-3832a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933142989356:android:86f0de2ace933bb44f1f89",
+        "android_client_info": {
+          "package_name": "com.tomarjatin.chessapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933142989356-a377pfj5tp6o01ta7j0tbfe73gg3edd7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tomarjatin.chessapp",
+            "certificate_hash": "21659fe833a6712aea2e32e3560cbbf85d2fb5b7"
+          }
+        },
+        {
+          "client_id": "933142989356-p48fhlrnesfj2r136v51unqqqc85j4i4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tomarjatin.chessapp",
+            "certificate_hash": "862164964c0d69f47f5f4cf020e307a7dcd8383f"
+          }
+        },
+        {
+          "client_id": "933142989356-n60720ibh95841d4odtfinsj34aac0mq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVg3BFT6UesXj2HXtLyIADMfqrnu2_EMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933142989356-n60720ibh95841d4odtfinsj34aac0mq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

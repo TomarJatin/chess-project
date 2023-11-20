@@ -1,37 +1,47 @@
 {
-  "expo": {
-    "name": "Chess App",
-  "slug": "chess-app",
-  "version": "1.0.0",
-  "orientation": "portrait",
-  "icon": "./assets/icon.png",
-  "userInterfaceStyle": "light",
-  "splash": {
-    "image": "./assets/splash.png",
-    "resizeMode": "contain",
-    "backgroundColor": "#ffffff"
-  },
-  "assetBundlePatterns": [
-    "**/*"
-  ],
-  "ios": {
-    "bundleIdentifier": "com.tomarJatin.chessapp",
-    "supportsTablet": true
-  },
-  "android": {
-    "package": "com.tomarjatin.chessapp",
-    "adaptiveIcon": {
-      "foregroundImage": "./assets/icon.png",
-      "backgroundColor": "#FFFFFF"
+    "expo": {
+        "name": "Chess App",
+        "slug": "chess-app",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "bundleIdentifier": "com.tomarJatin.chessapp",
+            "supportsTablet": true
+        },
+        "android": {
+            "package": "com.tomarjatin.chessapp",
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/icon.png",
+                "backgroundColor": "#FFFFFF"
+            },
+            "googleServicesFile": "./google-services.json"
+        },
+        "web": {
+            "favicon": "./assets/icon.png"
+        },
+        "extra": {
+            "eas": {
+                "projectId": "7581b767-802f-4392-9a23-c0f3f3f00c7a"
+            }
+        },
+        "plugins": [
+            ["expo-av"],
+            "@react-native-firebase/app",
+            "@react-native-firebase/crashlytics",
+            [
+                "expo-image-picker",
+                {
+                    "photosPermission": "The app accesses your photos to let you share them with your friends."
+                }
+            ]
+        ]
     }
-  },
-  "web": {
-    "favicon": "./assets/icon.png"
-  },
-    "extra": {
-      "eas": {
-        "projectId": "7581b767-802f-4392-9a23-c0f3f3f00c7a"
-      }
-    }
-  }
 }
