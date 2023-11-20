@@ -1,7 +1,7 @@
 import { View, Text, ImageBackground, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Chess from '../../components/ChessBoard';
 import Modal from "react-native-modal";
 import { Color, FontSize } from '../../../GlobalStyle';
@@ -14,10 +14,48 @@ const Online = () => {
     const navigation = useNavigation();
     const { selectedMode, timer, color } = useContext(GameContext);
     const [open, setOpen] = useState("");
+    const [yourTimer, setYourTimer] = useState(timer*60);
+    const [opponentTimer, setOpponentTimer] = useState(timer*60);
+    const [yourTimerActive, setYourTimerActive] = useState(false);
+    const [opponentTimerActive, setOpponentTimerActive] = useState(false);
 
     const handleExit = () => {
         console.log("handleExit");
     }
+
+    useEffect(() => {
+        let interval;
+    
+        if (yourTimerActive && yourTimer > 0) {
+          interval = setInterval(() => {
+            setYourTimer((prevSeconds) => prevSeconds - 1);
+          }, 1000);
+        }
+    
+        return () => {
+          clearInterval(interval);
+        };
+      }, [yourTimerActive, yourTimer]);
+
+      useEffect(() => {
+        let interval;
+    
+        if (opponentTimerActive && opponentTimer > 0) {
+          interval = setInterval(() => {
+            setOpponentTimer((prevSeconds) => prevSeconds - 1);
+          }, 1000);
+        }
+    
+        return () => {
+          clearInterval(interval);
+        };
+      }, [opponentTimer, opponentTimerActive]);
+    
+      const formatTime = (timeInSeconds) => {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const remainingSeconds = timeInSeconds % 60;
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+      };
 
     return (
         <>
@@ -99,7 +137,7 @@ const Online = () => {
                                             fontWeight: '800',
                                         }}
                                     >
-                                        Player 2
+                                        {color === 'b' ? "You": "Opponent"}
                                     </Text>
                                     <Text
                                         style={{
@@ -109,7 +147,7 @@ const Online = () => {
                                             marginTop: 3,
                                         }}
                                     >
-                                        00:60
+                                        {formatTime(color === 'b' ? yourTimer: opponentTimer)}
                                     </Text>
                                 </View>
                                 <Image
@@ -126,7 +164,7 @@ const Online = () => {
                         </View>
                     </ImageBackground>
                     <View style={{ width: '100%', marginVertical: 6 }}>
-                        <Chess />
+                        <Chess setOpponentTimerActive={setOpponentTimerActive} setYourTimerActive={setYourTimerActive} />
                     </View>
                     <ImageBackground
                         source={require('../../../assets/fire.gif')}
@@ -166,7 +204,7 @@ const Online = () => {
                                             fontWeight: '800',
                                         }}
                                     >
-                                        Player 1
+                                        {color === 'w' ? "You": "Opponent"}
                                     </Text>
                                     <Text
                                         style={{
@@ -176,7 +214,7 @@ const Online = () => {
                                             marginTop: 3,
                                         }}
                                     >
-                                        00:60
+                                        {formatTime(color === 'w' ? yourTimer: opponentTimer)}
                                     </Text>
                                 </View>
                                 <Image

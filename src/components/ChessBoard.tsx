@@ -10,6 +10,11 @@ import { Color } from '../../GlobalStyle';
 import { useRef } from 'react';
 import { GameContext } from '../contexts';
 
+interface ChessBoardProps{
+    setYourTimerActive: any;
+    setOpponentTimerActive: any;
+}
+
 // ["_board", "_turn", "_header", "_kings", "_epSquare", "_halfMoves", "_moveNumber", "_history", "_comments", "_castling"]
 
 const checkGameOver = (chess) => {
@@ -198,10 +203,10 @@ function evaluateMyBoard(game, move, prevSum, color) {
     return prevSum;
 }
 
-const Chess = () => {
+const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) => {
     const { width } = useWindowDimensions();
-    const chess = useChess();
-    const { setTimer, selectedMode, getMessage, color } = useContext(GameContext);
+    let chess = useChess();
+    const { selectedMode, color, submitMessage, matchId, setPrevInstance, prevInstance } = useContext(GameContext);
     let STACK_SIZE = 100; // maximum size of undo stack
     const [moveTime, setMoveTime] = useState(0);
     const [positionsPerS, setPositionPerS] = useState(0);
@@ -216,8 +221,30 @@ const Chess = () => {
         )
     ).current;
 
+    const doOpponentMove = (move) => {
+        chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
+        setYourTimerActive(true);
+        setOpponentTimerActive(false);
+        setPrevInstance(chess);
+    }
+
     ws.onmessage = (e) => {
         console.log('game message is...: ', e.data);
+        if (JSON.parse(e.data).data.message) {
+        }
+        if (JSON.parse(e.data).data.move) {
+            let move = JSON.parse(JSON.parse(e.data).data.move);
+            doOpponentMove(move);
+        }
+        if (JSON.parse(e.data).data && JSON.parse(e.data).data === "startMatch") {
+            Toast.show("Match Started", Toast.LONG);
+            if(color === chess.turn()){
+                setYourTimerActive(true);
+            }
+            else{
+                setOpponentTimerActive(true);
+            }
+        }
     };
 
     checkGameOver(chess);
@@ -320,17 +347,6 @@ const Chess = () => {
         return [bestMove, bestMoveValue];
     }
 
-    // function makeBestMove(color, game) {
-    //     let move;
-    //     if (color === 'b') {
-    //         move = getBestMove(game, color, globalSum)[0];
-    //     } else {
-    //         move = getBestMove(game, color, -globalSum)[0];
-    //     }
-    //     const _globalSum = evaluateMyBoard(game, move, globalSum, 'b');
-    //     setGlobalSum(_globalSum);
-    // }
-
     const AiTurn = () => {
         'worklet';
         if (!chess.isGameOver() && chess.turn() === 'b') {
@@ -352,8 +368,7 @@ const Chess = () => {
     };
 
     const handleSelectPiece = (square) => {
-        console.log(chess.turn());
-        if(chess.turn() !== color){
+        if (chess.turn() !== color) {
             return;
         }
         const moves = chess.moves({ square: square, verbose: true });
@@ -369,11 +384,27 @@ const Chess = () => {
         setGlobalSum(_globalSum);
         chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
         setVisibleMoves([]);
+        submitMessage({
+            messageType: 'chat',
+            data: {
+                matchId: matchId,
+                chatType: 'players',
+                chatData: {
+                    move: JSON.stringify(move),
+                },
+            },
+        });
+        setOpponentTimerActive(true);
+        setYourTimerActive(false);
+        setPrevInstance(chess);
+
         if (selectedMode === 'Ai') {
             setTimeout(AiTurn, 200);
             setAiRunning(true);
         }
     };
+
+  
 
     return (
         <View style={{ position: 'relative', backgroundColor: Color.backgroundColor }}>
