@@ -8,12 +8,36 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import GeneralButton from '../components/General/Button';
 import BottomNav from '../components/General/BottomNav';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ImgButton from '../components/General/ImgButton';
+import { useContext, useEffect } from 'react';
+import { GameContext } from '../contexts';
 
 export default function More({ navigation }) {
+    const {setAuth, auth} = useContext(GameContext);
+
     const handleClick = () => {
         console.log('button clicked');
     };
+
+    useEffect(() => {
+        console.log("auth: ", auth);
+    }, [auth])
+
+    const handleLogout = async () => {
+        // GoogleSignin.configure({
+        //   webClientId: "791454100200-3sugmk0bvequsduntdkjjrgjcvg1odvg.apps.googleusercontent.com",
+        // });
+        // const isSignedIn = await GoogleSignin.isSignedIn();
+        // if (isSignedIn) {
+        //   await GoogleSignin.revokeAccess();
+        //   await GoogleSignin.signOut();
+        // }
+        console.log("handleLogout");
+        setAuth(false);
+        // removePushToken();
+        await AsyncStorage.clear();
+      };
 
     return (
         <SafeAreaView>
@@ -196,6 +220,7 @@ export default function More({ navigation }) {
                     </TouchableOpacity>
                     <TouchableOpacity
                         activeOpacity={0.5}
+                        onPress={handleLogout}
                         style={{
                             width: '100%',
                             flexDirection: 'row',
@@ -209,7 +234,7 @@ export default function More({ navigation }) {
                             width={34}
                             paddingHorizontal={7}
                             paddingVertical={6}
-                            onPress={() => {}}
+                            onPress={handleLogout}
                             borderRadius={17}
                         />
                         <Text

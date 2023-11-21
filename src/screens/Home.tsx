@@ -20,7 +20,7 @@ import BottomNav from '../components/General/BottomNav';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
-    const { setSelectedMode, setTimer, submitMessage, setColor, ws, setMatchId } = useContext(GameContext);
+    const { setSelectedMode, setTimer, submitMessage, setColor, ws, setMatchId, identifier, authToken } = useContext(GameContext);
 
     useEffect(() => {
         ws.onopen = () => {
@@ -82,6 +82,10 @@ const Home = ({ navigation }) => {
                     } else {
                         setTimer(5);
                     }
+                }
+                if(JSON.parse(e.data).data.whitePiece){
+                    const _color = JSON.parse(e.data).data.whitePiece === identifier ? 'w': 'b';
+                    setColor(_color);
                 }
             };
             setTimeout(() => navigation.navigate('Game'), 1000);

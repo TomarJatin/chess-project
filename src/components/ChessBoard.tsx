@@ -206,7 +206,7 @@ function evaluateMyBoard(game, move, prevSum, color) {
 const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) => {
     const { width } = useWindowDimensions();
     let chess = useChess();
-    const { selectedMode, color, submitMessage, matchId, setPrevInstance, prevInstance } = useContext(GameContext);
+    const { selectedMode, color, submitMessage, matchId, setPrevInstance, prevInstance, authToken } = useContext(GameContext);
     let STACK_SIZE = 100; // maximum size of undo stack
     const [moveTime, setMoveTime] = useState(0);
     const [positionsPerS, setPositionPerS] = useState(0);
@@ -218,7 +218,7 @@ const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) =>
     const [onLoad, setOnload] = useState(true);
     let ws = useRef(
         new WebSocket(
-            'ws://139.59.94.85:3000/ws/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDM0ODI3MTcsImp0aSI6IjY1NTlhYWFkNzdmYTBmNjA0MDE5YjUwNSJ9.gxJZi_J0gryXCQzF6oRUT-nep6nsSrofZtweoT-M4qk'
+            'ws://139.59.94.85:3000/ws/'+authToken
         )
     ).current;
 

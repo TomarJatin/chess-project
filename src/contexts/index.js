@@ -8,11 +8,14 @@ const GameContext = createContext();
 
 // Data Provider component
 const GameProvider = ({ children }) => {
+    const [auth, setAuth] = useState(true);
   const [selectedMode, setSelectedMode] = useState("");
   const [timer, setTimer] = useState(5);
   const [color, setColor] = useState("b");
   const [matchId, setMatchId] = useState("matchId");
   const [prevInstance, setPrevInstance] = useState(null);
+  const [identifier, setIdentifier] = useState("");
+  const [authToken, setAuthToken] = useState("");
   let ws = useRef(
     new WebSocket(
         'ws://139.59.94.85:3000/ws/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDM0ODI3MTcsImp0aSI6IjY1NTlhYWFkNzdmYTBmNjA0MDE5YjUwNSJ9.gxJZi_J0gryXCQzF6oRUT-nep6nsSrofZtweoT-M4qk'
@@ -41,12 +44,16 @@ const submitMessage = useCallback((message) => {
         color,
         matchId,
         prevInstance,
+        auth,
+        identifier,
         setSelectedMode,
         setTimer,
         submitMessage,
         setColor,
         setMatchId,
-        setPrevInstance
+        setPrevInstance,
+        setAuth,
+        setIdentifier
       }}
     >
       {children}
