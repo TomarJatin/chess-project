@@ -20,7 +20,9 @@ import BottomNav from '../components/General/BottomNav';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
-    const { setSelectedMode, setTimer, submitMessage, setColor, ws, setMatchId, identifier, authToken } = useContext(GameContext);
+    const { setSelectedMode, setTimer, submitMessage, setColor, setMatchId, identifier, authToken } = useContext(GameContext);
+    let ws = useRef(new WebSocket('ws://139.59.94.85:3000/ws/'+authToken)).current;
+    
 
     useEffect(() => {
         ws.onopen = () => {

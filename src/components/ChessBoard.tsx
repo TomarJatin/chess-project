@@ -216,11 +216,7 @@ const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) =>
     const boardSize = Math.min(width, 400);
     const [aiRunning, setAiRunning] = useState(false);
     const [onLoad, setOnload] = useState(true);
-    let ws = useRef(
-        new WebSocket(
-            'ws://139.59.94.85:3000/ws/'+authToken
-        )
-    ).current;
+    let ws = useRef(new WebSocket('ws://139.59.94.85:3000/ws/'+authToken)).current;
 
     const doOpponentMove = (move) => {
         chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
@@ -411,7 +407,7 @@ const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) =>
     }
 
     useEffect(() => {
-        console.log(prevInstance);
+        // console.log(prevInstance);
         if(prevInstance && onLoad){
             loadPrevInstance();
             setOnload(false);

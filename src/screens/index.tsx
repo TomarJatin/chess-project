@@ -36,8 +36,8 @@ const screenOptions: NativeStackNavigationOptions = {
 const theme = makeTheme({});
 
 const Route = () => {
-    const { auth, setAuth, setIdentifier } = useContext(GameContext);
-    console.log("screens auth: ", auth);
+    const { auth, setAuth, setIdentifier, authToken, setAuthToken, setWs } = useContext(GameContext);
+    console.log("auth token: ", authToken);
 
     const handleRefreshToken = async () => {
         const refreshToken = await AsyncStorage.getItem("refreshToken");
@@ -78,6 +78,10 @@ const Route = () => {
                   "accessToken",
                   res.data?.data?.accessToken
                 );
+                setAuthToken(res.data?.data?.accessToken);
+                setWs(new WebSocket(
+                    'ws://139.59.94.85:3000/ws/'+res.data?.data?.accessToken
+                ))
                 // console.log("accessToken token updated");
               }
             })
