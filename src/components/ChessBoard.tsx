@@ -7,19 +7,21 @@ import Toast from 'react-native-simple-toast';
 import Pieces from './Pieces';
 import { Worklets } from 'react-native-worklets-core';
 import { Color } from '../../GlobalStyle';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
+import useWebSocket, { ReadyState } from 'react-native-use-websocket';
 import { GameContext } from '../contexts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface ChessBoardProps{
+interface ChessBoardProps {
     setYourTimerActive: any;
     setOpponentTimerActive: any;
 }
 
 // ["_board", "_turn", "_header", "_kings", "_epSquare", "_halfMoves", "_moveNumber", "_history", "_comments", "_castling"]
 
-const checkGameOver = (chess) => {
+const checkGameOver = (chess, color) => {
     if (chess.isGameOver()) {
-        if (chess.turn() === 'b' && chess.isCheckmate()) {
+        if (chess.turn() !== color && chess.isCheckmate()) {
             Toast.show('You won', Toast.LONG);
         } else if (chess.isCheckmate()) {
             Toast.show('You lose', Toast.LONG);
@@ -203,10 +205,11 @@ function evaluateMyBoard(game, move, prevSum, color) {
     return prevSum;
 }
 
-const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) => {
+const Chess = ({ setOpponentTimerActive, setYourTimerActive }: ChessBoardProps) => {
     const { width } = useWindowDimensions();
     let chess = useChess();
-    const { selectedMode, color, submitMessage, matchId, setPrevInstance, prevInstance, authToken } = useContext(GameContext);
+    const { selectedMode, color, matchId, setPrevInstance, prevInstance, authToken } =
+        useContext(GameContext);
     let STACK_SIZE = 100; // maximum size of undo stack
     const [moveTime, setMoveTime] = useState(0);
     const [positionsPerS, setPositionPerS] = useState(0);
@@ -216,35 +219,86 @@ const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) =>
     const boardSize = Math.min(width, 400);
     const [aiRunning, setAiRunning] = useState(false);
     const [onLoad, setOnload] = useState(true);
-    let ws = useRef(new WebSocket('ws://139.59.94.85:3000/ws/'+authToken)).current;
+    const socketUrl = 'ws://139.59.94.85:3000/ws/' + authToken;
+    const { sendMessage, sendJsonMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } =
+        useWebSocket(socketUrl, {
+            onOpen: () => console.log('opened'),
+            //Will attempt to reconnect on all close events, such as server shutting down
+            shouldReconnect: (closeEvent) => true,
+        });
+    const messageHistory = useRef<any>([]);
+
+    messageHistory.current = useMemo(
+        () => messageHistory.current.concat(lastMessage),
+        [lastMessage]
+    );
+
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.OPEN]: 'Open',
+        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSED]: 'Closed',
+        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
+
+    const submitMessage = (message) => {
+        sendMessage(JSON.stringify(message));
+    };
 
     const doOpponentMove = (move) => {
-        chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
-        setYourTimerActive(true);
-        setOpponentTimerActive(false);
-        setPrevInstance(chess.fen());
-    }
+        if (move.color !== color) {
+            chess.move(move.promotion ? { ...move, promotion: 'q' } : move);
+            setYourTimerActive(true);
+            setOpponentTimerActive(false);
+            setPrevInstance(chess.fen());
+        }
+    };
 
-    ws.onmessage = (e) => {
-        console.log('game message is...: ', e.data);
-        if (JSON.parse(e.data).data.message) {
-        }
-        if (JSON.parse(e.data).data.move) {
-            let move = JSON.parse(JSON.parse(e.data).data.move);
-            doOpponentMove(move);
-        }
-        if (JSON.parse(e.data).data && JSON.parse(e.data).data === "startMatch") {
-            Toast.show("Match Started", Toast.LONG);
-            if(color === chess.turn()){
-                setYourTimerActive(true);
+    const setGameStart = async () => {
+        await AsyncStorage.setItem('gameInProgress', 'true');
+    };
+
+    const checkLastMessage = () => {
+        if (Object.keys(lastJsonMessage).length !== 0) {
+            console.log(lastJsonMessage);
+            if (lastJsonMessage?.data?.move) {
+                let move = JSON.parse(lastJsonMessage.data.move);
+                doOpponentMove(move);
             }
-            else{
-                setOpponentTimerActive(true);
+            if (lastJsonMessage?.data?.won && lastJsonMessage?.data?.won === 'You won') {
+                submitMessage({
+                    messageType: 'chat',
+                    data: {
+                        messageType: 'winMatch',
+                        data: {
+                            matchId: matchId,
+                        },
+                    },
+                });
+            }
+            if (lastJsonMessage.data && lastJsonMessage.data === 'startMatch') {
+                Toast.show('Match Started', Toast.LONG);
+                if (color === chess.turn()) {
+                    setYourTimerActive(true);
+                    setOpponentTimerActive(false);
+                } else {
+                    setOpponentTimerActive(true);
+                    setYourTimerActive(false);
+                }
+                //    setGameStart();
             }
         }
     };
 
-    checkGameOver(chess);
+    useEffect(() => {
+        checkLastMessage();
+    }, [lastJsonMessage]);
+
+    useEffect(() => {
+        console.log('connection status: ', connectionStatus);
+    }, [connectionStatus]);
+
+    checkGameOver(chess, color);
 
     function minMax(game, depth, alpha, beta, isMaximizingPlayer, sum, color) {
         'worklet';
@@ -402,25 +456,21 @@ const Chess = ({setOpponentTimerActive, setYourTimerActive}: ChessBoardProps) =>
     };
 
     const loadPrevInstance = () => {
-       
         chess.load(prevInstance);
-    }
+    };
 
     useEffect(() => {
         // console.log(prevInstance);
-        if(prevInstance && onLoad){
+        if (prevInstance && onLoad) {
             loadPrevInstance();
             setOnload(false);
-            if(color === chess.turn()){
-                setYourTimerActive(true);
-            }
-            else{
-                setOpponentTimerActive(true);
-            }
         }
-    }, [prevInstance])
-
-  
+        if (color === chess.turn()) {
+            setYourTimerActive(true);
+        } else {
+            setOpponentTimerActive(true);
+        }
+    }, [prevInstance]);
 
     return (
         <View style={{ position: 'relative', backgroundColor: Color.backgroundColor }}>

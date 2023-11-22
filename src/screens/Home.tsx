@@ -14,27 +14,66 @@ import { Image } from 'expo-image';
 import EmptyBoard from '../components/EmptyBoard';
 import { Color, FontSize } from '../../GlobalStyle';
 import GeneralButton from '../components/General/Button';
-import { useContext, useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { GameContext } from '../contexts';
+import useWebSocket, {ReadyState} from 'react-native-use-websocket';
 import BottomNav from '../components/General/BottomNav';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
-    const { setSelectedMode, setTimer, submitMessage, setColor, setMatchId, identifier, authToken } = useContext(GameContext);
-    let ws = useRef(new WebSocket('ws://139.59.94.85:3000/ws/'+authToken)).current;
+    const { setSelectedMode, setTimer,  setColor, setMatchId, identifier, authToken, timer } = useContext(GameContext);
+    const socketUrl = 'ws://139.59.94.85:3000/ws/'+authToken;
+    const {
+        sendMessage,
+        sendJsonMessage,
+        lastMessage,
+        lastJsonMessage,
+        readyState,
+        getWebSocket
+    } = useWebSocket(socketUrl, {
+        onOpen: () => console.log('opened'),
+        //Will attempt to reconnect on all close events, such as server shutting down
+        shouldReconnect: (closeEvent) => true,
+    });
+    const messageHistory = useRef<any> ([]);
+
+    messageHistory.current = useMemo(
+        () => messageHistory.current.concat(lastMessage),
+        [lastMessage]
+      );
+
+      const connectionStatus = {
+        [ReadyState.CONNECTING]: "Connecting",
+        [ReadyState.OPEN]: "Open",
+        [ReadyState.CLOSING]: "Closing",
+        [ReadyState.CLOSED]: "Closed",
+        [ReadyState.UNINSTANTIATED]: "Uninstantiated",
+      }[readyState];
+
+      console.log("connection status: ", connectionStatus);
+
+      const submitMessage = (message) => {
+        sendMessage(JSON.stringify(message));
+      }
     
 
-    useEffect(() => {
-        ws.onopen = () => {
-            console.log('connection successful');
-        };
-        ws.onclose = (e) => {
-            console.log('closed connection');
-        };
-        ws.onerror = (e) => {
-            console.log('error is', e);
-        };
-    }, []);
+    // let ws = useRef(new WebSocket('ws://139.59.94.85:3000/ws/'+authToken)).current;
+
+
+    // useEffect(() => {
+    //     // ws.onopen = () => {
+    //     //     console.log('connection successful');
+    //     // };
+    //     // ws.onclose = (e) => {
+    //     //     console.log('closed connection');
+    //     // };
+    //     // ws.onerror = (e) => {
+    //     //     console.log('error is', e);
+    //     // };
+    //     if(lastMessage){
+
+    //     }
+    // }, []);
 
     const handleClick = () => {
         console.log('button clicked');
@@ -48,6 +87,47 @@ const Home = ({ navigation }) => {
     const handleCreateRoom = () => {
         navigation.navigate('CreateLobby');
     };
+    const checkLastMessage = (timer: number) => {
+        if(Object.keys(lastJsonMessage).length !== 0){
+            console.log(lastJsonMessage);
+            if(lastJsonMessage?.data?.color){
+                let _color = lastJsonMessage.data.color === "white" ? "w" : "b";
+                console.log("color: ", _color);
+                setColor(_color);
+            }
+            if(lastJsonMessage?.data?.matchId){
+                console.log("matchId: ", lastJsonMessage.data.matchId);
+                setMatchId(lastJsonMessage.data.matchId)
+            }
+            if(lastJsonMessage?.data?.error && lastJsonMessage?.data?.error === "no match found"){
+                console.log(lastJsonMessage.data.error);
+                submitMessage({
+                    messageType: 'roomJoin',
+                    data: {
+                        matchType: timer + 'min',
+                    },
+                });
+            }
+            if(lastJsonMessage?.data?.matchType){
+                console.log("matchtype: ", lastJsonMessage.data.matchType);
+                if (lastJsonMessage.data.matchType === '15min') {
+                    setTimer(15);
+                } else if (lastJsonMessage.data.matchType === '10min') {
+                    setTimer(15);
+                } else {
+                    setTimer(5);
+                }
+            }
+            if(lastJsonMessage?.data?.whitePiece){
+                const _color = lastJsonMessage.data.whitePiece === identifier ? 'w': 'b';
+                setColor(_color);
+            }
+        }
+    }
+
+    useEffect(() => {
+        checkLastMessage(timer);
+    }, [lastJsonMessage]);
 
     const handlePlayOnineClick = (mode: string, timer: number) => {
         setSelectedMode(mode);
@@ -55,41 +135,8 @@ const Home = ({ navigation }) => {
         submitMessage({
             messageType: 'currentMatch',
         });
-            ws.onmessage = (e) => {
-                console.log("message2", e.data);
-                if(JSON.parse(e.data).data.color){
-                    let _color = JSON.parse(e.data).data.color === "white" ? "w" : "b";
-                    console.log("color: ", _color);
-                    setColor(_color);
-                }
-                if(JSON.parse(e.data).data.matchId){
-                    console.log("matchId: ", JSON.parse(e.data).data.matchId);
-                    setMatchId(JSON.parse(e.data).data.matchId)
-                }
-                if(JSON.parse(e.data).data.error && JSON.parse(e.data).data.error === "no match found"){
-                    console.log(JSON.parse(e.data).data.error);
-                    submitMessage({
-                        messageType: 'roomJoin',
-                        data: {
-                            matchType: timer + 'min',
-                        },
-                    });
-                }
-                if(JSON.parse(e.data).data.matchType){
-                    console.log("matchtype: ", JSON.parse(e.data).data.matchType);
-                    if (JSON.parse(e.data).data.matchType === '15min') {
-                        setTimer(15);
-                    } else if (JSON.parse(e.data).data.matchType === '10min') {
-                        setTimer(15);
-                    } else {
-                        setTimer(5);
-                    }
-                }
-                if(JSON.parse(e.data).data.whitePiece){
-                    const _color = JSON.parse(e.data).data.whitePiece === identifier ? 'w': 'b';
-                    setColor(_color);
-                }
-            };
+            checkLastMessage(timer);
+            checkLastMessage(timer);
             setTimeout(() => navigation.navigate('Game'), 1000);
     };
 
