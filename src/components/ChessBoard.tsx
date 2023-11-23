@@ -24,16 +24,19 @@ interface ChessBoardProps {
     connectionStatus: any;
     submitMessage: any;
     addChatMessages: any;
+    opponentTimer: number;
+    yourTimer: number;
+    onCall: any
 }
 
 // ["_board", "_turn", "_header", "_kings", "_epSquare", "_halfMoves", "_moveNumber", "_history", "_comments", "_castling"]
 
-const checkGameOver = (chess, color, wonMatch) => {
-    if (chess.isGameOver()) {
-        if (chess.turn() !== color && chess.isCheckmate()) {
+const checkGameOver = (chess, color, wonMatch, opponentTimer, yourTimer) => {
+    if (chess.isGameOver() || opponentTimer < 0 || yourTimer <0) {
+        if ((chess.turn() !== color && chess.isCheckmate()) || opponentTimer < 0) {
             Toast.show('You won', Toast.LONG);
             wonMatch();
-        } else if (chess.isCheckmate()) {
+        } else if (chess.isCheckmate() || yourTimer < 0) {
             Toast.show('You lose', Toast.LONG);
         } else if (chess.isStalemate()) {
             Toast.show("It's a stalemate", Toast.LONG);
@@ -227,6 +230,9 @@ const Chess = ({
     connectionStatus,
     submitMessage,
     addChatMessages,
+    yourTimer,
+    opponentTimer,
+    onCall
 }: ChessBoardProps) => {
     const { width } = useWindowDimensions();
     let chess = useChess();
@@ -284,6 +290,7 @@ const Chess = ({
                     setOpponentTimerActive(true);
                     setYourTimerActive(false);
                 }
+                onCall();
                 //    setGameStart();
             }
         }
@@ -305,7 +312,7 @@ const Chess = ({
             },
         });
     };
-    checkGameOver(chess, color, wonMatch);
+    checkGameOver(chess, color, wonMatch, opponentTimer,yourTimer);
 
     function minMax(game, depth, alpha, beta, isMaximizingPlayer, sum, color) {
         'worklet';

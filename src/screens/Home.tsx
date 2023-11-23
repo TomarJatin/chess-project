@@ -64,10 +64,10 @@ const Home = ({ navigation }) => {
             url: `http://139.59.94.85:3010/api/lobby/findMatch?identifier=${identifier}&matchType=${timer}min`,
         }).then((res) => {
             console.log("res: ", res.data);
-            if(res.data?.data?.color && res.data?.data?.matchType){
+            if(res.data?.data?.color && res.data?.data?.matchId){
                 let _color = res.data.data.color === "white" ? "w" : "b";
                 setColor(_color);
-                setMatchId(res.data.data.matchType);
+                setMatchId(res.data.data.matchId);
                 setPrevInstance(null);
                 navigation.navigate("Game");
             }
