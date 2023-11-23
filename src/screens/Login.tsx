@@ -38,7 +38,7 @@ export default function Login({ navigation }) {
         })
           .then(async (res) => {
             console.log("res: ", res.data);
-            setAuth(true);
+            
             if (res.data?.data?.refreshToken) {
               await AsyncStorage.setItem(
                 "refreshToken",
@@ -51,19 +51,8 @@ export default function Login({ navigation }) {
                 res.data?.data?.accessToken
               );
               setAuthToken(res.data?.data?.accessToken);
-              console.log("decodding access token");
-              const decoded =  jwtDecode(res.data?.data?.accessToken);
-              console.log("jti: ", decoded.jti);
-              if(decoded?.jti){
-                await AsyncStorage.setItem(
-                    "identifier",
-                    decoded.jti
-                  );
-                  setIdentifier(decoded.jti);
-              }
             }
-            console.log("setting auth: ", auth);
-            
+            setAuth(true);
           })
           .catch((err) => {
             if (err?.response?.data?.data?.error) {

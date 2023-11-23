@@ -18,43 +18,12 @@ import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { GameContext } from '../contexts';
 import useWebSocket, {ReadyState} from 'react-native-use-websocket';
 import BottomNav from '../components/General/BottomNav';
+import axios from 'axios';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
-    const { setSelectedMode, setTimer,  setColor, setMatchId, identifier, authToken, timer } = useContext(GameContext);
-    const socketUrl = 'ws://139.59.94.85:3000/ws/'+authToken;
-    const {
-        sendMessage,
-        sendJsonMessage,
-        lastMessage,
-        lastJsonMessage,
-        readyState,
-        getWebSocket
-    } = useWebSocket(socketUrl, {
-        onOpen: () => console.log('opened'),
-        //Will attempt to reconnect on all close events, such as server shutting down
-        shouldReconnect: (closeEvent) => true,
-    });
-    const messageHistory = useRef<any> ([]);
-
-    messageHistory.current = useMemo(
-        () => messageHistory.current.concat(lastMessage),
-        [lastMessage]
-      );
-
-      const connectionStatus = {
-        [ReadyState.CONNECTING]: "Connecting",
-        [ReadyState.OPEN]: "Open",
-        [ReadyState.CLOSING]: "Closing",
-        [ReadyState.CLOSED]: "Closed",
-        [ReadyState.UNINSTANTIATED]: "Uninstantiated",
-      }[readyState];
-
-      console.log("connection status: ", connectionStatus);
-
-      const submitMessage = (message) => {
-        sendMessage(JSON.stringify(message));
-      }
+    const { setSelectedMode, setTimer,  setColor, setMatchId, identifier, authToken, timer, setPrevInstance } = useContext(GameContext);
+   
     
 
     // let ws = useRef(new WebSocket('ws://139.59.94.85:3000/ws/'+authToken)).current;
@@ -87,57 +56,63 @@ const Home = ({ navigation }) => {
     const handleCreateRoom = () => {
         navigation.navigate('CreateLobby');
     };
-    const checkLastMessage = (timer: number) => {
-        if(Object.keys(lastJsonMessage).length !== 0){
-            console.log(lastJsonMessage);
-            if(lastJsonMessage?.data?.color){
-                let _color = lastJsonMessage.data.color === "white" ? "w" : "b";
-                console.log("color: ", _color);
+
+    const joinRoom = (timer: number) => {
+        axios({
+            method: 'post',
+            maxBodyLength: Infinity,
+            url: `http://139.59.94.85:3010/api/lobby/findMatch?identifier=${identifier}&matchType=${timer}min`,
+        }).then((res) => {
+            console.log("res: ", res.data);
+            if(res.data?.data?.color && res.data?.data?.matchType){
+                let _color = res.data.data.color === "white" ? "w" : "b";
+                setColor(_color);
+                setMatchId(res.data.data.matchType);
+                setPrevInstance(null);
+                navigation.navigate("Game");
+            }
+        })
+        .catch((err) => {
+            console.log("join room err: ", err);
+        })
+    }
+
+    const checkCurrentMatchResponse = (data, timer) => {
+         if(data?.data){
+            if(data?.data?.matchId){
+                setMatchId(data?.data?.matchId);
+            }
+            if(data?.data?.whitePiece){
+                const _color = data.data.whitePiece === identifier ? 'w': 'b';
                 setColor(_color);
             }
-            if(lastJsonMessage?.data?.matchId){
-                console.log("matchId: ", lastJsonMessage.data.matchId);
-                setMatchId(lastJsonMessage.data.matchId)
-            }
-            if(lastJsonMessage?.data?.error && lastJsonMessage?.data?.error === "no match found"){
-                console.log(lastJsonMessage.data.error);
-                submitMessage({
-                    messageType: 'roomJoin',
-                    data: {
-                        matchType: timer + 'min',
-                    },
-                });
-            }
-            if(lastJsonMessage?.data?.matchType){
-                console.log("matchtype: ", lastJsonMessage.data.matchType);
-                if (lastJsonMessage.data.matchType === '15min') {
-                    setTimer(15);
-                } else if (lastJsonMessage.data.matchType === '10min') {
-                    setTimer(15);
-                } else {
-                    setTimer(5);
-                }
-            }
-            if(lastJsonMessage?.data?.whitePiece){
-                const _color = lastJsonMessage.data.whitePiece === identifier ? 'w': 'b';
-                setColor(_color);
-            }
+            navigation.navigate("Game");
         }
     }
 
-    useEffect(() => {
-        checkLastMessage(timer);
-    }, [lastJsonMessage]);
+    const getCurrentMatch = (timer: number) => {
+        console.log("identifier: ", identifier);
+        axios({
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `http://139.59.94.85:3010/api/lobby/currentMatch?identifier=${identifier}`,
+        }).then((res) => {
+            console.log("res: ", res.data);
+            checkCurrentMatchResponse(res.data, timer);
+        })
+        .catch((err) => {
+            console.log("current match error: ", err?.response?.data)
+            if(err?.response?.data?.data?.error && err?.response?.data?.data?.error === "no match found"){
+                console.log("get current match error: ", err?.response?.data?.data?.error);
+                joinRoom(timer);
+            }
+        })
+    }
 
     const handlePlayOnineClick = (mode: string, timer: number) => {
         setSelectedMode(mode);
         setTimer(timer);
-        submitMessage({
-            messageType: 'currentMatch',
-        });
-            checkLastMessage(timer);
-            checkLastMessage(timer);
-            setTimeout(() => navigation.navigate('Game'), 1000);
+        getCurrentMatch(timer);
     };
 
     const handleJoinRoom = () => {

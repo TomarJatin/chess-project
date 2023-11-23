@@ -36,8 +36,7 @@ const screenOptions: NativeStackNavigationOptions = {
 const theme = makeTheme({});
 
 const Route = () => {
-    const { auth, setAuth, setIdentifier, authToken, setAuthToken, setWs } = useContext(GameContext);
-    console.log("auth token: ", authToken);
+    const { auth, setAuth, setIdentifier, setAuthToken } = useContext(GameContext);
 
     const handleRefreshToken = async () => {
         const refreshToken = await AsyncStorage.getItem("refreshToken");
@@ -60,11 +59,6 @@ const Route = () => {
             .then(async (res) => {
               if (res.data?.data) {
                 setAuth(true);
-                const _identifier = await AsyncStorage.getItem("identifier");
-                console.log("identifier: ", _identifier);
-                if(_identifier){
-                    setIdentifier(_identifier);
-                }
               }
               if (res.data?.data?.refreshToken) {
                 await AsyncStorage.setItem(
@@ -79,9 +73,6 @@ const Route = () => {
                   res.data?.data?.accessToken
                 );
                 setAuthToken(res.data?.data?.accessToken);
-                setWs(new WebSocket(
-                    'ws://139.59.94.85:3000/ws/'+res.data?.data?.accessToken
-                ))
                 // console.log("accessToken token updated");
               }
             })
@@ -92,8 +83,32 @@ const Route = () => {
         }
       };
 
+    const getProfileData = async () => {
+        const accessToken = await AsyncStorage.getItem("accessToken");
+        if(accessToken){
+            axios({
+                method: 'get',
+                maxBodyLength: Infinity,
+                url: 'http://139.59.94.85:3010/api/profile/user',
+                headers: { 
+                  'Authorization': 'Bearer '+accessToken
+                }
+            })
+            .then((res) => {
+                console.log(res.data);
+                if(res.data?.data?.identifier){
+                    setIdentifier(res.data?.data?.identifier);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+    }
+
       useEffect(() => {
         handleRefreshToken();
+        getProfileData();
       }, [])
 
     return (

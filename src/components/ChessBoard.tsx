@@ -15,14 +15,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface ChessBoardProps {
     setYourTimerActive: any;
     setOpponentTimerActive: any;
+    sendMessage: any;
+    sendJsonMessage: any;
+    lastMessage: any;
+    lastJsonMessage: any;
+    readyState: any;
+    getWebSocket: any;
+    connectionStatus: any;
+    submitMessage: any;
+    addChatMessages: any;
 }
 
 // ["_board", "_turn", "_header", "_kings", "_epSquare", "_halfMoves", "_moveNumber", "_history", "_comments", "_castling"]
 
-const checkGameOver = (chess, color) => {
+const checkGameOver = (chess, color, wonMatch) => {
     if (chess.isGameOver()) {
         if (chess.turn() !== color && chess.isCheckmate()) {
             Toast.show('You won', Toast.LONG);
+            wonMatch();
         } else if (chess.isCheckmate()) {
             Toast.show('You lose', Toast.LONG);
         } else if (chess.isStalemate()) {
@@ -205,10 +215,22 @@ function evaluateMyBoard(game, move, prevSum, color) {
     return prevSum;
 }
 
-const Chess = ({ setOpponentTimerActive, setYourTimerActive }: ChessBoardProps) => {
+const Chess = ({
+    setOpponentTimerActive,
+    setYourTimerActive,
+    sendMessage,
+    sendJsonMessage,
+    lastMessage,
+    lastJsonMessage,
+    readyState,
+    getWebSocket,
+    connectionStatus,
+    submitMessage,
+    addChatMessages,
+}: ChessBoardProps) => {
     const { width } = useWindowDimensions();
     let chess = useChess();
-    const { selectedMode, color, matchId, setPrevInstance, prevInstance, authToken } =
+    const { selectedMode, color, matchId, setPrevInstance, prevInstance, authToken, identifier } =
         useContext(GameContext);
     let STACK_SIZE = 100; // maximum size of undo stack
     const [moveTime, setMoveTime] = useState(0);
@@ -219,31 +241,6 @@ const Chess = ({ setOpponentTimerActive, setYourTimerActive }: ChessBoardProps) 
     const boardSize = Math.min(width, 400);
     const [aiRunning, setAiRunning] = useState(false);
     const [onLoad, setOnload] = useState(true);
-    const socketUrl = 'ws://139.59.94.85:3000/ws/' + authToken;
-    const { sendMessage, sendJsonMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } =
-        useWebSocket(socketUrl, {
-            onOpen: () => console.log('opened'),
-            //Will attempt to reconnect on all close events, such as server shutting down
-            shouldReconnect: (closeEvent) => true,
-        });
-    const messageHistory = useRef<any>([]);
-
-    messageHistory.current = useMemo(
-        () => messageHistory.current.concat(lastMessage),
-        [lastMessage]
-    );
-
-    const connectionStatus = {
-        [ReadyState.CONNECTING]: 'Connecting',
-        [ReadyState.OPEN]: 'Open',
-        [ReadyState.CLOSING]: 'Closing',
-        [ReadyState.CLOSED]: 'Closed',
-        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-    }[readyState];
-
-    const submitMessage = (message) => {
-        sendMessage(JSON.stringify(message));
-    };
 
     const doOpponentMove = (move) => {
         if (move.color !== color) {
@@ -265,14 +262,16 @@ const Chess = ({ setOpponentTimerActive, setYourTimerActive }: ChessBoardProps) 
                 let move = JSON.parse(lastJsonMessage.data.move);
                 doOpponentMove(move);
             }
+            if (lastJsonMessage?.data?.message) {
+                if(lastJsonMessage?.data?.message?.identifier && lastJsonMessage?.data?.message?.text){
+                    addChatMessages(lastJsonMessage?.data?.message?.text, identifier === lastJsonMessage?.data?.message?.identifier);
+                }
+            }
             if (lastJsonMessage?.data?.won && lastJsonMessage?.data?.won === 'You won') {
                 submitMessage({
-                    messageType: 'chat',
+                    messageType: 'winMatch',
                     data: {
-                        messageType: 'winMatch',
-                        data: {
-                            matchId: matchId,
-                        },
+                        matchId: matchId,
                     },
                 });
             }
@@ -298,7 +297,15 @@ const Chess = ({ setOpponentTimerActive, setYourTimerActive }: ChessBoardProps) 
         console.log('connection status: ', connectionStatus);
     }, [connectionStatus]);
 
-    checkGameOver(chess, color);
+    const wonMatch = () => {
+        submitMessage({
+            messageType: 'winMatch',
+            data: {
+                matchId: matchId,
+            },
+        });
+    };
+    checkGameOver(chess, color, wonMatch);
 
     function minMax(game, depth, alpha, beta, isMaximizingPlayer, sum, color) {
         'worklet';

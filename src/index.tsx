@@ -1,11 +1,14 @@
 import 'expo-dev-client';
 import { GameProvider } from './contexts';
 import Route from './screens';
+import { ChatProvider } from './contexts/chat';
 
 const App = () => {
     return (
         <GameProvider>
-            <Route />
+            <ChatProvider>
+                <Route />
+            </ChatProvider>
         </GameProvider>
     );
 };
