@@ -542,6 +542,7 @@ const Online = () => {
                                 yourTimer={yourTimer}
                                 opponentTimer={opponentTimer}
                                 addChatMessages={addChatMessages}
+                                onCall={onCall}
                             />
                         </View>
                         <ImageBackground
