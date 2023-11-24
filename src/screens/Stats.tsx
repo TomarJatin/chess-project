@@ -45,7 +45,7 @@ export default function Stats({ navigation }) {
                 {/* Stats */}
 
                 <ImageBackground
-                    source={require('../../assets/bg.png')}
+                    source={require('../../assets/bg1.png')}
                     resizeMode='cover'
                     style={{
                         width: '100%',

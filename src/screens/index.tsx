@@ -10,6 +10,7 @@ import 'expo-dev-client';
 import Lobby from './Lobby';
 import CreateLobby from './CreateLobby';
 import InsideLobby from './InsideLobby';
+import Toast from 'react-native-simple-toast';
 import More from './More';
 import Stats from './Stats';
 import Profile from './Profile';
@@ -40,7 +41,6 @@ const Route = () => {
 
     const handleRefreshToken = async () => {
         const refreshToken = await AsyncStorage.getItem("refreshToken");
-        console.log("refreshToken", refreshToken);
         if (refreshToken === null) {
           // console.log("no refresh token here");
           setAuth(false);
@@ -101,7 +101,7 @@ const Route = () => {
                 }
             })
             .catch((err) => {
-                console.log(err);
+                Toast.show(JSON.stringify(err), Toast.LONG);
             })
         }
     }

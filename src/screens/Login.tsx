@@ -4,8 +4,8 @@ import { Dimensions, StatusBar, Platform } from 'react-native';
 import { Color, FontSize } from '../../GlobalStyle';
 import GeneralButton from '../components/General/Button';
 import { Image } from 'expo-image';
-import Toast from "react-native-simple-toast";
 import { useContext, useState } from 'react';
+import Toast from 'react-native-simple-toast';
 import axios from "axios";
 import { GameContext } from '../contexts';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,7 +25,6 @@ export default function Login({ navigation }) {
           email: email.toLowerCase(),
           password: password,
         });
-        console.log("data: ", _data);
     
         axios({
           method: "post",
@@ -37,7 +36,8 @@ export default function Login({ navigation }) {
           data: _data,
         })
           .then(async (res) => {
-            console.log("res: ", res.data);
+            Toast.show(JSON.stringify(res.data), Toast.LONG);
+            setAuth(true);
             
             if (res.data?.data?.refreshToken) {
               await AsyncStorage.setItem(
@@ -52,7 +52,7 @@ export default function Login({ navigation }) {
               );
               setAuthToken(res.data?.data?.accessToken);
             }
-            setAuth(true);
+            
           })
           .catch((err) => {
             if (err?.response?.data?.data?.error) {

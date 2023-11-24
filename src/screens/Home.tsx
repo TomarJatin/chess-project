@@ -16,6 +16,7 @@ import { Color, FontSize } from '../../GlobalStyle';
 import GeneralButton from '../components/General/Button';
 import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { GameContext } from '../contexts';
+import Toast from 'react-native-simple-toast';
 import useWebSocket, {ReadyState} from 'react-native-use-websocket';
 import BottomNav from '../components/General/BottomNav';
 import axios from 'axios';
@@ -63,7 +64,7 @@ const Home = ({ navigation }) => {
             maxBodyLength: Infinity,
             url: `http://139.59.94.85:3010/api/lobby/findMatch?identifier=${identifier}&matchType=${timer}min`,
         }).then((res) => {
-            console.log("res: ", res.data);
+            Toast.show(JSON.stringify(res.data), Toast.LONG);
             if(res.data?.data?.color && res.data?.data?.matchId){
                 let _color = res.data.data.color === "white" ? "w" : "b";
                 setColor(_color);
@@ -73,7 +74,7 @@ const Home = ({ navigation }) => {
             }
         })
         .catch((err) => {
-            console.log("join room err: ", err);
+            Toast.show(JSON.stringify(err), Toast.LONG);
         })
     }
 
@@ -97,7 +98,7 @@ const Home = ({ navigation }) => {
             maxBodyLength: Infinity,
             url: `http://139.59.94.85:3010/api/lobby/currentMatch?identifier=${identifier}`,
         }).then((res) => {
-            console.log("res: ", res.data);
+            Toast.show(JSON.stringify(res.data), Toast.LONG);
             checkCurrentMatchResponse(res.data, timer);
         })
         .catch((err) => {
@@ -184,7 +185,7 @@ const Home = ({ navigation }) => {
 
                         <TouchableOpacity activeOpacity={1} style={{ marginTop: 30 }}>
                             <ImageBackground
-                                source={require('../../assets/bg.png')}
+                                source={require('../../assets/bg1.png')}
                                 resizeMode='cover'
                                 style={{
                                     width: '100%',
@@ -281,7 +282,7 @@ const Home = ({ navigation }) => {
                             style={{ marginTop: 30 }}
                         >
                             <ImageBackground
-                                source={require('../../assets/bg.png')}
+                                source={require('../../assets/bg1.png')}
                                 resizeMode='cover'
                                 style={{
                                     width: '100%',
@@ -339,7 +340,7 @@ const Home = ({ navigation }) => {
                         {/* Create Room card */}
                         <TouchableOpacity activeOpacity={1} style={{ marginTop: 30 }}>
                             <ImageBackground
-                                source={require('../../assets/bg.png')}
+                                source={require('../../assets/bg1.png')}
                                 resizeMode='cover'
                                 style={{
                                     width: '100%',
