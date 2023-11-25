@@ -20,11 +20,12 @@ import Toast from 'react-native-simple-toast';
 import useWebSocket, {ReadyState} from 'react-native-use-websocket';
 import BottomNav from '../components/General/BottomNav';
 import axios from 'axios';
+import { ChatContext } from '../contexts/chat';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
     const { setSelectedMode, setTimer,  setColor, setMatchId, identifier, authToken, timer, setPrevInstance, setJoinRoom } = useContext(GameContext);
-   
+   const {setChatMessages} = useContext(ChatContext);
     
 
     // let ws = useRef(new WebSocket('ws://139.59.94.85:3000/ws/'+authToken)).current;
@@ -110,6 +111,7 @@ const Home = ({ navigation }) => {
                 console.log("get current match error: ", err?.response?.data?.data?.error);
                 setTimer(timer);
                 setJoinRoom(true);
+                setChatMessages([]);
                 navigation.navigate("Game");
             }
         })
