@@ -27,7 +27,8 @@ import { FlatList } from 'dripsy';
 
 const Online = () => {
     const navigation = useNavigation();
-    const { selectedMode, timer, color, matchId, authToken, identifier } = useContext(GameContext);
+    const { selectedMode, timer, color, matchId, authToken, identifier, joinRoom, setJoinRoom, setColor, setMatchId, setPrevInstance } =
+        useContext(GameContext);
     const { chatMessages, setChatMessages } = useContext(ChatContext);
     const [chatMessage, setChatMessage] = useState('');
     const [open, setOpen] = useState('');
@@ -42,33 +43,34 @@ const Online = () => {
             //Will attempt to reconnect on all close events, such as server shutting down
             shouldReconnect: (closeEvent) => true,
         });
-        let name;
-        let connectedUser;
-        const [userId, setUserId] = useState('userId');
-        const [calling, setCalling] = useState(false);
-        // Video Scrs
-        const [localStream, setLocalStream] = useState({toURL: () => null});
-        const [remoteStream, setRemoteStream] = useState({toURL: () => null});
-        const [conn, setConn] = useState(new WebSocket('ws://3.20.188.26:8080'));
-        const [yourConn, setYourConn] = useState(
-          //change the config as you need
-          new RTCPeerConnection({
+    let name;
+    let connectedUser;
+    const [userId, setUserId] = useState('userId');
+    const [calling, setCalling] = useState(false);
+    // Video Scrs
+    const [localStream, setLocalStream] = useState({ toURL: () => null });
+    const [remoteStream, setRemoteStream] = useState({ toURL: () => null });
+    const [conn, setConn] = useState(new WebSocket('ws://3.20.188.26:8080'));
+    const [yourConn, setYourConn] = useState(
+        //change the config as you need
+        new RTCPeerConnection({
             iceServers: [
-              {
-                urls: 'stun:stun.l.google.com:19302',  
-              }, {
-                urls: 'stun:stun1.l.google.com:19302',    
-              }, {
-                urls: 'stun:stun2.l.google.com:19302',    
-              }
-      
+                {
+                    urls: 'stun:stun.l.google.com:19302',
+                },
+                {
+                    urls: 'stun:stun1.l.google.com:19302',
+                },
+                {
+                    urls: 'stun:stun2.l.google.com:19302',
+                },
             ],
-          }),
-        );
-      
-        const [offer, setOffer] = useState(null);
-      
-        const [callToUsername, setCallToUsername] = useState("abcd");
+        })
+    );
+
+    const [offer, setOffer] = useState(null);
+
+    const [callToUsername, setCallToUsername] = useState('abcd');
 
     const addChatMessages = (message: string, fromUser: boolean) => {
         let _messages: any = chatMessages;
@@ -91,263 +93,254 @@ const Online = () => {
         sendMessage(JSON.stringify(message));
     };
     useEffect(() => {
-        if (connectionStatus ===  "Open") {
-          try {
-            InCallManager.start({media: 'audio'});
-            InCallManager.setForceSpeakerphoneOn(true);
-            InCallManager.setSpeakerphoneOn(true);
-          } catch (err) {
-            console.log('InApp Caller ---------------------->', err);
-          }
-    
-          console.log(InCallManager);
-        }
-      }, [connectionStatus]);
+        console.log('connection status: ', connectionStatus);
+        if (connectionStatus === 'Open') {
+            try {
+                InCallManager.start({ media: 'audio' });
+                InCallManager.setForceSpeakerphoneOn(true);
+                InCallManager.setSpeakerphoneOn(true);
+            } catch (err) {
+                console.log('InApp Caller ---------------------->', err);
+            }
 
-      const checkRtcMessages = (data: any) => {
-            console.log('Data --------------------->', data);
-            switch (data.type) {
-              case 'login':
+            console.log(InCallManager);
+        }
+    }, [connectionStatus]);
+
+    const checkRtcMessages = (data: any) => {
+        console.log('Data --------------------->', data);
+        switch (data.type) {
+            case 'login':
                 console.log('Login');
                 break;
-              //when somebody wants to call us
-              case 'offer':
+            //when somebody wants to call us
+            case 'offer':
                 handleOffer(data.offer, data.name);
                 console.log('Offer');
                 break;
-              case 'answer':
+            case 'answer':
                 handleAnswer(data.answer);
                 console.log('Answer');
                 break;
-              //when a remote peer sends an ice candidate to us
-              case 'candidate':
+            //when a remote peer sends an ice candidate to us
+            case 'candidate':
                 handleCandidate(data.candidate);
                 console.log('Candidate');
                 break;
-              case 'leave':
+            case 'leave':
                 handleLeave();
                 console.log('Leave');
                 break;
-              default:
+            default:
                 break;
-            }
-      }
-    
-    
-      useEffect(() => {
+        }
+    };
+
+    useEffect(() => {
         /**
          *
          * Sockets Signalling
          */
         //when we got a message from a signaling server
-        conn.onmessage = msg => {
-          checkRtcMessages(msg);
-        };
         /**
          * Socjket Signalling Ends
          */
-    
+
         let isFront = false;
         mediaDevices.enumerateDevices().then((sourceInfos: any) => {
-          let videoSourceId;
-          for (let i = 0; i < sourceInfos.length; i++) {
-            const sourceInfo = sourceInfos[i];
-            if (
-              sourceInfo.kind == 'videoinput' &&
-              sourceInfo.facing == (isFront ? 'front' : 'environment')
-            ) {
-              videoSourceId = sourceInfo.deviceId;
+            let videoSourceId;
+            for (let i = 0; i < sourceInfos.length; i++) {
+                const sourceInfo = sourceInfos[i];
+                if (
+                    sourceInfo.kind == 'videoinput' &&
+                    sourceInfo.facing == (isFront ? 'front' : 'environment')
+                ) {
+                    videoSourceId = sourceInfo.deviceId;
+                }
             }
-          }
-          mediaDevices
-            .getUserMedia({
-              audio: true,
-            //   video: {
-            //     mandatory: {
-            //       minWidth: 500, // Provide your own width, height and frame rate here
-            //       minHeight: 300,
-            //       minFrameRate: 30,
-            //     },
-            //     facingMode: isFront ? 'user' : 'environment',
-            //     optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
-            //   },
-            video: false
-            })
-            .then(stream => {
-              // Got stream!
-              setLocalStream(stream);
-    
-              // setup stream listening
-              yourConn.addStream(stream);
-            })
-            .catch(error => {
-              // Log error
-            });
-        });
-    
-        yourConn.onaddstream = event => {
-          console.log('On Add Stream', event);
-          setRemoteStream(event.stream);
-        };
-    
-        // Setup ice handling
-        yourConn.onicecandidate = event => {
-          if (event.candidate) {
-            send({
-              type: 'candidate',
-              candidate: event.candidate,
-            });
-          }
-        };
-      }, []);
+            mediaDevices
+                .getUserMedia({
+                    audio: true,
+                    //   video: {
+                    //     mandatory: {
+                    //       minWidth: 500, // Provide your own width, height and frame rate here
+                    //       minHeight: 300,
+                    //       minFrameRate: 30,
+                    //     },
+                    //     facingMode: isFront ? 'user' : 'environment',
+                    //     optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
+                    //   },
+                    video: false,
+                })
+                .then((stream) => {
+                    // Got stream!
+                    setLocalStream(stream);
 
-      useEffect(() => {
+                    // setup stream listening
+                    yourConn.addStream(stream);
+                })
+                .catch((error) => {
+                    // Log error
+                });
+        });
+
+        yourConn.onaddstream = (event) => {
+            console.log('On Add Stream', event);
+            setRemoteStream(event.stream);
+        };
+
+        // Setup ice handling
+        yourConn.onicecandidate = (event) => {
+            if (event.candidate) {
+                send({
+                    type: 'candidate',
+                    candidate: event.candidate,
+                });
+            }
+        };
+    }, []);
+
+    useEffect(() => {
         if (Object.keys(lastJsonMessage).length !== 0) {
-            if (lastJsonMessage?.data?.rtc){
+            console.log(lastJsonMessage);
+            if (lastJsonMessage?.data?.rtc) {
                 console.log(lastJsonMessage);
                 checkRtcMessages(lastJsonMessage?.data?.rtc);
             }
+            if(lastJsonMessage?.data?.color && lastJsonMessage?.data?.matchId){
+                let _color = lastJsonMessage.data.color === "white" ? "w" : "b";
+                setColor(_color);
+                setMatchId(lastJsonMessage.data.matchId);
+                setPrevInstance(null);
+            }
         }
-      }, [lastJsonMessage]);
-    
-      const send = message => {
+    }, [lastJsonMessage]);
+
+    const send = (message) => {
         //attach the other peer username to our messages
-        
+
         if (connectedUser) {
-          message.name = connectedUser;
-          console.log('Connected iser in end----------', message);
+            message.name = connectedUser;
+            console.log('Connected iser in end----------', message);
         }
-    
+
         submitMessage({
             messageType: 'chat',
             data: {
                 matchId: matchId,
                 chatType: 'players',
                 chatData: {
-                    rtc: message
+                    rtc: message,
                 },
             },
-        })
-      };
-    
-      const onCall = () => {
+        });
+    };
+
+    const onCall = () => {
         setCalling(true);
-    
+
         connectedUser = callToUsername;
         console.log('Caling to', callToUsername);
         // create an offer
-    
-        yourConn.createOffer().then(offer => {
-          yourConn.setLocalDescription(offer).then(() => {
-            console.log('Sending Ofer');
-            console.log(offer);
-            send({
-              type: 'offer',
-              offer: offer,
+
+        yourConn.createOffer().then((offer) => {
+            yourConn.setLocalDescription(offer).then(() => {
+                console.log('Sending Ofer');
+                console.log(offer);
+                send({
+                    type: 'offer',
+                    offer: offer,
+                });
+                // Send pc.localDescription to peer
             });
-            // Send pc.localDescription to peer
-          });
         });
-      };
-    
-      //when somebody sends us an offer
-      const handleOffer = async (offer, name) => {
+    };
+
+    //when somebody sends us an offer
+    const handleOffer = async (offer, name) => {
         console.log(name + ' is calling you.');
-    
+
         console.log('Accepting Call===========>', offer);
         connectedUser = name;
-    
+
         try {
-          await yourConn.setRemoteDescription(new RTCSessionDescription(offer));
-    
-          const answer = await yourConn.createAnswer();
-    
-          await yourConn.setLocalDescription(answer);
-          send({
-            type: 'answer',
-            answer: answer,
-          });
+            await yourConn.setRemoteDescription(new RTCSessionDescription(offer));
+
+            const answer = await yourConn.createAnswer();
+
+            await yourConn.setLocalDescription(answer);
+            send({
+                type: 'answer',
+                answer: answer,
+            });
         } catch (err) {
-          console.log('Offerr Error', err);
+            console.log('Offerr Error', err);
         }
-      };
-    
-      //when we got an answer from a remote user
-      const handleAnswer = answer => {
+    };
+
+    //when we got an answer from a remote user
+    const handleAnswer = (answer) => {
         yourConn.setRemoteDescription(new RTCSessionDescription(answer));
-      };
-    
-      //when we got an ice candidate from a remote user
-      const handleCandidate = candidate => {
+    };
+
+    //when we got an ice candidate from a remote user
+    const handleCandidate = (candidate) => {
         setCalling(false);
         console.log('Candidate ----------------->', candidate);
         yourConn.addIceCandidate(new RTCIceCandidate(candidate));
-      };
-    
-      //hang up
-      const hangUp = () => {
+    };
+
+    //hang up
+    const hangUp = () => {
         send({
-          type: 'leave',
+            type: 'leave',
         });
-    
+
         handleLeave();
-      };
-    
-      const handleLeave = () => {
+    };
+
+    const handleLeave = () => {
         connectedUser = null;
-        setRemoteStream({toURL: () => null});
-    
+        setRemoteStream({ toURL: () => null });
+
         yourConn.close();
         // yourConn.onicecandidate = null;
         // yourConn.onaddstream = null;
-      };
-    
-      const acceptCall = async () => {
+    };
+
+    const acceptCall = async () => {
         console.log('Accepting Call===========>', offer);
         connectedUser = offer.name;
-    
+
         try {
-          await yourConn.setRemoteDescription(new RTCSessionDescription(offer));
-    
-          const answer = await yourConn.createAnswer();
-    
-          await yourConn.setLocalDescription(answer);
-    
-          send({
-            type: 'answer',
-            answer: answer,
-          });
+            await yourConn.setRemoteDescription(new RTCSessionDescription(offer));
+
+            const answer = await yourConn.createAnswer();
+
+            await yourConn.setLocalDescription(answer);
+
+            send({
+                type: 'answer',
+                answer: answer,
+            });
         } catch (err) {
-          console.log('Offerr Error', err);
+            console.log('Offerr Error', err);
         }
-      };
-      const rejectCall = async () => {
+    };
+    const rejectCall = async () => {
         send({
-          type: 'leave',
+            type: 'leave',
         });
         ``;
         setOffer(null);
-    
+
         handleLeave();
-      };
+    };
 
     const sendChatMessage = () => {
         if (chatMessage === '') {
             return;
         }
-        console.log("chat message: ", JSON.stringify({
-            messageType: 'chat',
-            data: {
-                matchId: matchId,
-                chatType: 'players',
-                chatData: {
-                    message: {
-                        text: chatMessage,
-                        identifier: identifier
-                    }
-                },
-            },
-        }));
         submitMessage({
             messageType: 'chat',
             data: {
@@ -356,8 +349,8 @@ const Online = () => {
                 chatData: {
                     message: {
                         text: chatMessage,
-                        identifier: identifier
-                    }
+                        identifier: identifier,
+                    },
                 },
             },
         });
@@ -405,6 +398,22 @@ const Online = () => {
             clearInterval(interval);
         };
     }, [opponentTimer, opponentTimerActive]);
+
+    const handleJoinRoom = () => {
+        submitMessage({
+            messageType: 'roomJoin',
+            data: {
+                matchType: timer+'min',
+            },
+        });
+    };
+
+    useEffect(() => {
+        if (joinRoom) {
+            handleJoinRoom();
+            setJoinRoom(false);
+        }
+    }, []);
 
     // useEffect(() => {
     //     console.log('connection status: ', connectionStatus);
@@ -523,8 +532,10 @@ const Online = () => {
                                     />
                                 </View>
                                 <RTCView
-            streamURL={color === 'b' ? localStream.toURL() : remoteStream.toURL()}
-          />
+                                    streamURL={
+                                        color === 'b' ? localStream.toURL() : remoteStream.toURL()
+                                    }
+                                />
                             </View>
                         </ImageBackground>
                         <View style={{ width: '100%', marginVertical: 6 }}>
@@ -607,7 +618,11 @@ const Online = () => {
                                         }}
                                     />
                                 </View>
-                                <RTCView streamURL={color === 'w' ? localStream.toURL() : remoteStream.toURL()} />
+                                <RTCView
+                                    streamURL={
+                                        color === 'w' ? localStream.toURL() : remoteStream.toURL()
+                                    }
+                                />
                             </View>
                         </ImageBackground>
                     </View>
@@ -672,29 +687,34 @@ const Online = () => {
                             borderColor: 'rgba(0, 0, 0, 0.1)',
                         }}
                     >
-                        {chatMessages.length === 0 && <Text
-                                            style={{
-                                                color: Color.textColor,
-                                                fontSize: FontSize.xs13,
-                                                fontWeight: '800',
-                                            }}
-                                        >
-                                            No chats here
-                                        </Text>}
+                        {chatMessages.length === 0 && (
+                            <Text
+                                style={{
+                                    color: Color.textColor,
+                                    fontSize: FontSize.xs13,
+                                    fontWeight: '800',
+                                }}
+                            >
+                                No chats here
+                            </Text>
+                        )}
                         <FlatList
                             data={chatMessages}
                             renderItem={({ item, index }) => (
-                                <View key={index} style={{
-                                    width: "100%",
-                                    flexDirection: 'column',
-                                    alignItems: item?.fromUser ? 'flex-end': "flex-start",
-                                    marginBottom: 20
-                                }}>
+                                <View
+                                    key={index}
+                                    style={{
+                                        width: '100%',
+                                        flexDirection: 'column',
+                                        alignItems: item?.fromUser ? 'flex-end' : 'flex-start',
+                                        marginBottom: 20,
+                                    }}
+                                >
                                     <View
                                         style={{
                                             width: Dimensions.get('window').width * 0.7,
                                             flexDirection: 'column',
-                                            alignItems: item?.fromUser ? 'flex-end': "flex-start",
+                                            alignItems: item?.fromUser ? 'flex-end' : 'flex-start',
                                         }}
                                     >
                                         <Text

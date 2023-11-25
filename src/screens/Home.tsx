@@ -23,7 +23,7 @@ import axios from 'axios';
 
 const Home = ({ navigation }) => {
     const { width } = useWindowDimensions();
-    const { setSelectedMode, setTimer,  setColor, setMatchId, identifier, authToken, timer, setPrevInstance } = useContext(GameContext);
+    const { setSelectedMode, setTimer,  setColor, setMatchId, identifier, authToken, timer, setPrevInstance, setJoinRoom } = useContext(GameContext);
    
     
 
@@ -58,25 +58,27 @@ const Home = ({ navigation }) => {
         navigation.navigate('CreateLobby');
     };
 
-    const joinRoom = (timer: number) => {
-        axios({
-            method: 'post',
-            maxBodyLength: Infinity,
-            url: `http://139.59.94.85:3010/api/lobby/findMatch?identifier=${identifier}&matchType=${timer}min`,
-        }).then((res) => {
-            Toast.show(JSON.stringify(res.data), Toast.LONG);
-            if(res.data?.data?.color && res.data?.data?.matchId){
-                let _color = res.data.data.color === "white" ? "w" : "b";
-                setColor(_color);
-                setMatchId(res.data.data.matchId);
-                setPrevInstance(null);
-                navigation.navigate("Game");
-            }
-        })
-        .catch((err) => {
-            Toast.show(JSON.stringify(err), Toast.LONG);
-        })
-    }
+    // const joinRoom = (timer: number) => {
+    //     axios({
+    //         method: 'post',
+    //         maxBodyLength: Infinity,
+    //         url: `http://139.59.94.85:3010/api/lobby/findMatch?identifier=${identifier}&matchType=${timer}min`,
+    //     }).then((res) => {
+    //         Toast.show(JSON.stringify(res.data), Toast.LONG);
+    //         console.log(JSON.stringify(res.data));
+    //         if(res.data?.data?.color && res.data?.data?.matchId){
+    //             let _color = res.data.data.color === "white" ? "w" : "b";
+    //             setColor(_color);
+    //             setMatchId(res.data.data.matchId);
+    //             setPrevInstance(null);
+    //             navigation.navigate("Game");
+    //         }
+    //     })
+    //     .catch((err) => {
+    //         Toast.show(JSON.stringify(err), Toast.LONG);
+    //         console.log(JSON.stringify(err));
+    //     })
+    // }
 
     const checkCurrentMatchResponse = (data, timer) => {
          if(data?.data){
@@ -99,13 +101,16 @@ const Home = ({ navigation }) => {
             url: `http://139.59.94.85:3010/api/lobby/currentMatch?identifier=${identifier}`,
         }).then((res) => {
             Toast.show(JSON.stringify(res.data), Toast.LONG);
+            console.log(JSON.stringify(res.data));
             checkCurrentMatchResponse(res.data, timer);
         })
         .catch((err) => {
             console.log("current match error: ", err?.response?.data)
             if(err?.response?.data?.data?.error && err?.response?.data?.data?.error === "no match found"){
                 console.log("get current match error: ", err?.response?.data?.data?.error);
-                joinRoom(timer);
+                setTimer(timer);
+                setJoinRoom(true);
+                navigation.navigate("Game");
             }
         })
     }

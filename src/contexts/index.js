@@ -16,6 +16,7 @@ const GameProvider = ({ children }) => {
     const [prevInstance, setPrevInstance] = useState(null);
     const [identifier, setIdentifier] = useState('');
     const [authToken, setAuthToken] = useState('');
+    const [joinRoom, setJoinRoom] = useState(false);
     const [socketActive, setSocketActive] = useState(false);
     const [ws, setWs] = useState(
         new WebSocket(
@@ -44,6 +45,7 @@ const GameProvider = ({ children }) => {
                 auth,
                 identifier,
                 authToken,
+                joinRoom,
                 setSelectedMode,
                 setTimer,
                 submitMessage,
@@ -53,6 +55,7 @@ const GameProvider = ({ children }) => {
                 setAuth,
                 setIdentifier,
                 setAuthToken,
+                setJoinRoom,
                 setWs
             }}
         >

@@ -300,10 +300,6 @@ const Chess = ({
         checkLastMessage();
     }, [lastJsonMessage]);
 
-    useEffect(() => {
-        console.log('connection status: ', connectionStatus);
-    }, [connectionStatus]);
-
     const wonMatch = () => {
         submitMessage({
             messageType: 'winMatch',
