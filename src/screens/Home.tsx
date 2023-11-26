@@ -28,7 +28,7 @@ const Home = ({ navigation }) => {
    const {setChatMessages} = useContext(ChatContext);
     
 
-    // let ws = useRef(new WebSocket('ws://139.59.94.85:3000/ws/'+authToken)).current;
+    // let ws = useRef(new WebSocket('wss://closm.com/ws/'+authToken)).current;
 
 
     // useEffect(() => {

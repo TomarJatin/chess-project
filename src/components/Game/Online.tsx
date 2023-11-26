@@ -47,7 +47,7 @@ const Online = () => {
     const [opponentTimer, setOpponentTimer] = useState(timer * 60);
     const [yourTimerActive, setYourTimerActive] = useState(false);
     const [opponentTimerActive, setOpponentTimerActive] = useState(false);
-    const socketUrl = 'ws://139.59.94.85:3000/ws/' + authToken;
+    const socketUrl = 'wss://closm.com/ws/' + authToken;
     const { sendMessage, sendJsonMessage, lastMessage, lastJsonMessage, readyState, getWebSocket } =
         useWebSocket(socketUrl, {
             onOpen: () => console.log('opened'),
