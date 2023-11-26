@@ -49,7 +49,7 @@ const Route = () => {
           axios({
             method: "post",
             maxBodyLength: Infinity,
-            url: "http://139.59.94.85:3010/api/auth/token/refresh",
+            url: "https://closm.com/api/auth/token/refresh",
             headers: {
               "Content-Type": "application/json",
             },
@@ -92,7 +92,7 @@ const Route = () => {
             axios({
                 method: 'get',
                 maxBodyLength: Infinity,
-                url: 'http://139.59.94.85:3010/api/profile/user',
+                url: 'https://closm.com/api/profile/user',
                 headers: { 
                   'Authorization': 'Bearer '+accessToken
                 }

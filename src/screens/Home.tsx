@@ -63,7 +63,7 @@ const Home = ({ navigation }) => {
     //     axios({
     //         method: 'post',
     //         maxBodyLength: Infinity,
-    //         url: `http://139.59.94.85:3010/api/lobby/findMatch?identifier=${identifier}&matchType=${timer}min`,
+    //         url: `https://closm.com/api/lobby/findMatch?identifier=${identifier}&matchType=${timer}min`,
     //     }).then((res) => {
     //         Toast.show(JSON.stringify(res.data), Toast.LONG);
     //         console.log(JSON.stringify(res.data));
@@ -99,7 +99,7 @@ const Home = ({ navigation }) => {
         axios({
             method: 'get',
             maxBodyLength: Infinity,
-            url: `http://139.59.94.85:3010/api/lobby/currentMatch?identifier=${identifier}`,
+            url: `https://closm.com/api/lobby/currentMatch?identifier=${identifier}`,
         }).then((res) => {
             Toast.show(JSON.stringify(res.data), Toast.LONG);
             console.log(JSON.stringify(res.data));

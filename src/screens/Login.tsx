@@ -18,7 +18,6 @@ export default function Login({ navigation }) {
     const {setAuth, setIdentifier, auth, setAuthToken} = useContext(GameContext);
 
     const handleLogin = async () => {
-        Toast.show("login clicked", Toast.LONG);
         if(email === "" || password === ""){
             return;
         }
@@ -30,7 +29,7 @@ export default function Login({ navigation }) {
         axios({
           method: "post",
           maxBodyLength: Infinity,
-          url: "http://139.59.94.85:3010/api/auth/local/login",
+          url: "https://closm.com/api/auth/local/login",
           headers: {
             "Content-Type": "application/json",
           },
