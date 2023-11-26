@@ -27,8 +27,19 @@ import { FlatList } from 'dripsy';
 
 const Online = () => {
     const navigation = useNavigation();
-    const { selectedMode, timer, color, matchId, authToken, identifier, joinRoom, setJoinRoom, setColor, setMatchId, setPrevInstance } =
-        useContext(GameContext);
+    const {
+        selectedMode,
+        timer,
+        color,
+        matchId,
+        authToken,
+        identifier,
+        joinRoom,
+        setJoinRoom,
+        setColor,
+        setMatchId,
+        setPrevInstance,
+    } = useContext(GameContext);
     const { chatMessages, setChatMessages } = useContext(ChatContext);
     const [chatMessage, setChatMessage] = useState('');
     const [open, setOpen] = useState('');
@@ -45,12 +56,10 @@ const Online = () => {
         });
     let name;
     let connectedUser;
-    const [userId, setUserId] = useState('userId');
     const [calling, setCalling] = useState(false);
     // Video Scrs
     const [localStream, setLocalStream] = useState({ toURL: () => null });
     const [remoteStream, setRemoteStream] = useState({ toURL: () => null });
-    const [conn, setConn] = useState(new WebSocket('ws://3.20.188.26:8080'));
     const [yourConn, setYourConn] = useState(
         //change the config as you need
         new RTCPeerConnection({
@@ -96,14 +105,16 @@ const Online = () => {
         console.log('connection status: ', connectionStatus);
         if (connectionStatus === 'Open') {
             try {
-                InCallManager.start({ media: 'audio' });
+                InCallManager.start();
+                InCallManager.setKeepScreenOn(true);
                 InCallManager.setForceSpeakerphoneOn(true);
-                InCallManager.setSpeakerphoneOn(true);
+
+                return () => {
+                    InCallManager.stop();
+                };
             } catch (err) {
                 console.log('InApp Caller ---------------------->', err);
             }
-
-            console.log(InCallManager);
         }
     }, [connectionStatus]);
 
@@ -207,8 +218,8 @@ const Online = () => {
                 console.log(lastJsonMessage);
                 checkRtcMessages(lastJsonMessage?.data?.rtc);
             }
-            if(lastJsonMessage?.data?.color && lastJsonMessage?.data?.matchId){
-                let _color = lastJsonMessage.data.color === "white" ? "w" : "b";
+            if (lastJsonMessage?.data?.color && lastJsonMessage?.data?.matchId) {
+                let _color = lastJsonMessage.data.color === 'white' ? 'w' : 'b';
                 setColor(_color);
                 setMatchId(lastJsonMessage.data.matchId);
                 setPrevInstance(null);
@@ -403,7 +414,7 @@ const Online = () => {
         submitMessage({
             messageType: 'roomJoin',
             data: {
-                matchType: timer+'min',
+                matchType: timer + 'min',
             },
         });
     };

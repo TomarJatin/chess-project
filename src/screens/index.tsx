@@ -43,6 +43,7 @@ const Route = () => {
         const refreshToken = await AsyncStorage.getItem("refreshToken");
         if (refreshToken === null) {
           // console.log("no refresh token here");
+          Toast.show("No refresh token here", Toast.LONG);
           setAuth(false);
         } else {
           axios({
@@ -57,6 +58,7 @@ const Route = () => {
             }),
           })
             .then(async (res) => {
+                Toast.show(JSON.stringify(res.data), Toast.LONG);
               if (res.data?.data) {
                 setAuth(true);
               }
@@ -78,6 +80,7 @@ const Route = () => {
             })
             .catch((err) => {
               // console.log("error: ", err);
+              Toast.show(JSON.stringify(err), Toast.LONG);
               setAuth(false);
             });
         }
@@ -95,7 +98,8 @@ const Route = () => {
                 }
             })
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
+                Toast.show(JSON.stringify(res.data), Toast.LONG);
                 if(res.data?.data?.identifier){
                     setIdentifier(res.data?.data?.identifier);
                 }
@@ -109,6 +113,7 @@ const Route = () => {
       useEffect(() => {
         handleRefreshToken();
         getProfileData();
+        Toast.show("Index screen", Toast.LONG);
       }, [])
 
     return (

@@ -18,6 +18,7 @@ export default function Login({ navigation }) {
     const {setAuth, setIdentifier, auth, setAuthToken} = useContext(GameContext);
 
     const handleLogin = async () => {
+        Toast.show("login clicked", Toast.LONG);
         if(email === "" || password === ""){
             return;
         }
@@ -25,7 +26,7 @@ export default function Login({ navigation }) {
           email: email.toLowerCase(),
           password: password,
         });
-    
+        Toast.show("data: "+_data, Toast.LONG);
         axios({
           method: "post",
           maxBodyLength: Infinity,
@@ -55,6 +56,7 @@ export default function Login({ navigation }) {
             
           })
           .catch((err) => {
+            Toast.show(JSON.stringify(err), Toast.LONG);
             if (err?.response?.data?.data?.error) {
               Toast.show(err?.response?.data?.data?.error, Toast.LONG, {
                 textColor: "#ffffff",
