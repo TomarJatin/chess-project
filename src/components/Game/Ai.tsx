@@ -1,7 +1,7 @@
 import { View, Text, ImageBackground, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect, useRef, useMemo } from 'react';
 import Chess from '../../components/ChessBoard';
 import { Color, FontSize } from '../../../GlobalStyle';
 import { GameContext } from '../../contexts';
@@ -12,6 +12,16 @@ import BottomNav from '../General/BottomNav';
 const Ai = () => {
     const navigation = useNavigation();
     const { selectedMode, timer } = useContext(GameContext);
+    const [yourTimer, setYourTimer] = useState(timer * 60);
+    const [opponentTimer, setOpponentTimer] = useState(timer * 60);
+    const [yourTimerActive, setYourTimerActive] = useState(false);
+    const [opponentTimerActive, setOpponentTimerActive] = useState(false);
+
+    const formatTime = (timeInSeconds) => {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const remainingSeconds = timeInSeconds % 60;
+        return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    };
 
     const handleClick = () => {
         console.log('button clicked');
@@ -20,6 +30,39 @@ const Ai = () => {
     const handleLobbyClick = () => {
         console.log('Lobby clicked');
     };
+
+    useEffect(() => {
+        setYourTimerActive(true);
+        setOpponentTimerActive(false);
+    }, [])
+
+    useEffect(() => {
+        let interval;
+
+        if (yourTimerActive && yourTimer > 0) {
+            interval = setInterval(() => {
+                setYourTimer((prevSeconds) => prevSeconds - 1);
+            }, 1000);
+        }
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [yourTimerActive, yourTimer]);
+
+    useEffect(() => {
+        let interval;
+
+        if (opponentTimerActive && opponentTimer > 0) {
+            interval = setInterval(() => {
+                setOpponentTimer((prevSeconds) => prevSeconds - 1);
+            }, 1000);
+        }
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [opponentTimer, opponentTimerActive]);
 
     return (
         <SafeAreaView style={{ display: 'flex', flex: 1, alignItems: 'center', backgroundColor: Color.backgroundColor, paddingVertical: 20}}>
@@ -85,7 +128,7 @@ const Ai = () => {
                                         />
                                         <View>
                                             <Text style={{color: Color.textColor, fontSize: FontSize.xs13, fontWeight: "800"}}>Ai</Text>
-                                            <Text style={{color: Color.textColor, fontSize: FontSize.xxs, fontWeight: "400", marginTop: 3}}>00:60</Text>
+                                            <Text style={{color: Color.textColor, fontSize: FontSize.xxs, fontWeight: "400", marginTop: 3}}>{formatTime(opponentTimer)}</Text>
                                         </View>
                                         <Image
                                             style={{
@@ -99,7 +142,12 @@ const Ai = () => {
                                 </View>
                             </ImageBackground>
                             <View style={{width: "100%", marginVertical: 6}}>
-                            <Chess />
+                            <Chess 
+                            yourTimer={yourTimer}
+                            opponentTimer={opponentTimer}
+                            setOpponentTimerActive={setOpponentTimerActive}
+                            setYourTimerActive={setYourTimerActive}
+                            />
                             </View>
                             <ImageBackground
                                 source={require('../../../assets/fire.gif')}
@@ -129,7 +177,7 @@ const Ai = () => {
                                         />
                                         <View>
                                             <Text style={{color: Color.textColor, fontSize: FontSize.xs13, fontWeight: "800"}}>Ai</Text>
-                                            <Text style={{color: Color.textColor, fontSize: FontSize.xxs, fontWeight: "400", marginTop: 3}}>00:60</Text>
+                                            <Text style={{color: Color.textColor, fontSize: FontSize.xxs, fontWeight: "400", marginTop: 3}}>{formatTime(yourTimer)}</Text>
                                         </View>
                                         <Image
                                             style={{

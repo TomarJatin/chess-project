@@ -51,6 +51,7 @@ export default function Login({ navigation }) {
                 res.data?.data?.accessToken
               );
               setAuthToken(res.data?.data?.accessToken);
+              setIdentifier(res.data?.data?.accessToken);
             }
             
           })
