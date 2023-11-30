@@ -471,7 +471,7 @@ const Chess = ({
 
     useEffect(() => {
         // console.log(prevInstance);
-        if (prevInstance && onLoad) {
+        if (onLoad && prevInstance) {
             loadPrevInstance();
             setOnload(false);
         }

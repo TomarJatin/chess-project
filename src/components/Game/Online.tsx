@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import BottomNav from '../General/BottomNav';
 import useWebSocket, { ReadyState } from 'react-native-use-websocket';
 import InCallManager from 'react-native-incall-manager';
+import Toast from 'react-native-simple-toast';
 
 import {
     RTCPeerConnection,
@@ -212,8 +213,11 @@ const Online = () => {
     }, []);
 
     useEffect(() => {
+        console.log("lastJsonMessage: ", lastJsonMessage);
+        console.log("lastMessage: ", lastMessage);
         if (Object.keys(lastJsonMessage).length !== 0) {
             console.log(lastJsonMessage);
+            Toast.show(JSON.stringify(lastJsonMessage), Toast.LONG);
             if (lastJsonMessage?.data?.rtc) {
                 console.log(lastJsonMessage);
                 checkRtcMessages(lastJsonMessage?.data?.rtc);
@@ -225,7 +229,7 @@ const Online = () => {
                 setPrevInstance(null);
             }
         }
-    }, [lastJsonMessage]);
+    }, [lastJsonMessage, lastMessage]);
 
     const send = (message) => {
         //attach the other peer username to our messages
@@ -235,16 +239,22 @@ const Online = () => {
             console.log('Connected iser in end----------', message);
         }
 
-        submitMessage({
-            messageType: 'chat',
-            data: {
-                matchId: matchId,
-                chatType: 'players',
-                chatData: {
-                    rtc: message,
+        if(connectionStatus === "Open"){
+            submitMessage({
+                messageType: 'chat',
+                data: {
+                    matchId: matchId,
+                    chatType: 'players',
+                    chatData: {
+                        rtc: message,
+                    },
                 },
-            },
-        });
+            });
+        }else{
+            Toast.show("connection error: "+connectionStatus, Toast.LONG);
+        }
+
+       
     };
 
     const onCall = () => {
@@ -285,6 +295,7 @@ const Online = () => {
                 answer: answer,
             });
         } catch (err) {
+            Toast.show('Offerr Error'+err, Toast.LONG);
             console.log('Offerr Error', err);
         }
     };
@@ -336,6 +347,7 @@ const Online = () => {
             });
         } catch (err) {
             console.log('Offerr Error', err);
+            Toast.show("Offer err: "+err, Toast.LONG);
         }
     };
     const rejectCall = async () => {
@@ -352,6 +364,7 @@ const Online = () => {
         if (chatMessage === '') {
             return;
         }
+       if(connectionStatus === "Open"){
         submitMessage({
             messageType: 'chat',
             data: {
@@ -365,6 +378,9 @@ const Online = () => {
                 },
             },
         });
+       }else{
+        Toast.show("connection error:  "+connectionStatus, Toast.LONG);
+       }
         setChatMessage('');
     };
 
@@ -411,20 +427,26 @@ const Online = () => {
     }, [opponentTimer, opponentTimerActive]);
 
     const handleJoinRoom = () => {
-        submitMessage({
-            messageType: 'roomJoin',
-            data: {
-                matchType: timer + 'min',
-            },
-        });
+        if(connectionStatus === "Open"){
+            submitMessage({
+                messageType: 'roomJoin',
+                data: {
+                    matchType: timer + 'min',
+                },
+            });
+        }
+        else{
+            Toast.show("connection error: "+connectionStatus, Toast.LONG);
+        }
+        
     };
 
     useEffect(() => {
-        if (joinRoom) {
+        if (joinRoom && connectionStatus === "Open") {
             handleJoinRoom();
             setJoinRoom(false);
         }
-    }, []);
+    }, [connectionStatus]);
 
     // useEffect(() => {
     //     console.log('connection status: ', connectionStatus);
@@ -478,6 +500,15 @@ const Online = () => {
                         height: Dimensions.get('window').height,
                     }}
                 >
+                <Text
+                                            style={{
+                                                color: Color.textColor,
+                                                fontSize: FontSize.xs13,
+                                                fontWeight: '800',
+                                            }}
+                                        >
+                                            Connection status: {connectionStatus}
+                                        </Text>
                     <View style={{ width: '100%', marginTop: 30 }}>
                         {/* Player 1 */}
                         <ImageBackground

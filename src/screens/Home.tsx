@@ -106,6 +106,7 @@ const Home = ({ navigation }) => {
             checkCurrentMatchResponse(res.data, timer);
         })
         .catch((err) => {
+            Toast.show(JSON.stringify(err), Toast.LONG);
             console.log("current match error: ", err?.response?.data)
             if(err?.response?.data?.data?.error && err?.response?.data?.data?.error === "no match found"){
                 console.log("get current match error: ", err?.response?.data?.data?.error);
